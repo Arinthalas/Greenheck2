@@ -11,7 +11,7 @@ namespace Greenheck_Project.Database
     class DataRetrievalClass
     {
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck-master\Greenheck-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -21,6 +21,7 @@ namespace Greenheck_Project.Database
             return thing;
         }
 
+        #region Team Methods
         //Fetches all the teams from the database and returns them in a list.
         public static List<Teams> GetTeams()
         {
@@ -74,51 +75,22 @@ namespace Greenheck_Project.Database
             return them;
         }
 
-        //Fetches Department data from the database and returns it in a list
-        public static List<Department> GetDept()
+        //Fetches and returns a team ID based on a selected name
+        public static int GetTeamByName(string name)
         {
-            List<Department> them = new List<Department>();
-
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
-            fetch.CommandText = "SELECT * FROM DepartmentTable";
 
-            SqlDataReader list = fetch.ExecuteReader();
-
-            while (list.Read())
-            {
-                Department us = new Department();
-                us.deptID = Convert.ToInt32(list["DepartmentID"]);
-                us.deptName = list["DepartmentName"].ToString();
-                them.Add(us);
-            }
-            fetch.Connection.Close();
-
-            return them;
-        }
-
-        //Fetches the ID of a specified department.
-        public static int GetDeptID(string name)
-        {
-            List<Department> them = new List<Department>();
-
-            SqlCommand fetch = new SqlCommand();
-            fetch.Connection = GetConn();
-            fetch.CommandText = "SELECT DepartmentID FROM DepartmentTable WHERE DepartmentName = @param1";
+            fetch.CommandText = "SELECT TeamId FROM TeamTable WHERE TeamName = @param1";
             fetch.Parameters.AddWithValue("@param1", name);
 
-            SqlDataReader list = fetch.ExecuteReader();
+            int id = Convert.ToInt32(fetch.ExecuteScalar());
 
-            while (list.Read())
-            {
-                Department us = new Department();
-                us.deptID = Convert.ToInt32(list["DepartmentID"]);
-                them.Add(us);
-            }
             fetch.Connection.Close();
 
-            return them[0].deptID;
+            return id;
         }
+
 
         //Logic test to determine wether a team name or ID already exists in the database
         public static bool TeamExists(int id, string name)
@@ -168,21 +140,56 @@ namespace Greenheck_Project.Database
             rem.Connection.Close();
         }
 
-        //Fetches and returns a team ID based on a selected name
-        public static int GetTeamByName(string name)
+        #endregion
+
+        #region Department Methods
+        //Fetches Department data from the database and returns it in a list
+        public static List<Department> GetDept()
         {
+            List<Department> them = new List<Department>();
+
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
+            fetch.CommandText = "SELECT * FROM DepartmentTable";
 
-            fetch.CommandText = "SELECT TeamId FROM TeamTable WHERE TeamName = @param1";
-            fetch.Parameters.AddWithValue("@param1", name);
+            SqlDataReader list = fetch.ExecuteReader();
 
-            int id = Convert.ToInt32(fetch.ExecuteScalar());
-
+            while (list.Read())
+            {
+                Department us = new Department();
+                us.deptID = Convert.ToInt32(list["DepartmentID"]);
+                us.deptName = list["DepartmentName"].ToString();
+                them.Add(us);
+            }
             fetch.Connection.Close();
 
-            return id;
+            return them;
         }
+
+        //Fetches the ID of a specified department.
+        public static int GetDeptID(string name)
+        {
+            List<Department> them = new List<Department>();
+
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+            fetch.CommandText = "SELECT DepartmentID FROM DepartmentTable WHERE DepartmentName = @param1";
+            fetch.Parameters.AddWithValue("@param1", name);
+
+            SqlDataReader list = fetch.ExecuteReader();
+
+            while (list.Read())
+            {
+                Department us = new Department();
+                us.deptID = Convert.ToInt32(list["DepartmentID"]);
+                them.Add(us);
+            }
+            fetch.Connection.Close();
+
+            return them[0].deptID;
+        }
+
+#endregion
 
         //Fetches and returns the number of projects that share a specified status.
         public static int GetStatus(int num)
@@ -203,7 +210,7 @@ namespace Greenheck_Project.Database
         //Fetches data from previous quarters and returns it as a list.
         public static List<Quarter> GetQuarter()
         {
-            List<Quarter> thing = new List<Quarter>();
+            List<Quarter> quarterList = new List<Quarter>();
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
 
@@ -219,16 +226,11 @@ namespace Greenheck_Project.Database
                 thus.projectID = Convert.ToInt32(list["ProjectID"]);
                 thus.statusID = Convert.ToInt32(list["StatusID"]);
                 thus.comments = list["Comments"].ToString();
-                //thus.statusCancelled = Convert.ToInt32(list["Cancelled"]);
-                //thus.statusComplete = Convert.ToInt32(list["Completed"]);
-                //thus.statusDelay = Convert.ToInt32(list["Delayed"]);
-                //thus.statusInProgress = Convert.ToInt32(list["InProgress"]);
-                //thus.statusNotStart = Convert.ToInt32(list["NotStarted"]);
 
-                thing.Add(thus);
+                quarterList.Add(thus);
             }
 
-            return thing;
+            return quarterList;
         }
 
         //Counts the number of unique statuses from the StatusTable
@@ -272,6 +274,33 @@ namespace Greenheck_Project.Database
         //    return data;
         //}
 
+        public static List<FocusComments> GetComments()
+        {
+            List<FocusComments> comments = new List<FocusComments>();
+
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT * FROM FocusCommentsTable";
+
+            SqlDataReader list = fetch.ExecuteReader();
+
+            while (list.Read())
+            {
+                FocusComments comment = new FocusComments();
+                comment.FiscalYear = DateTime.Parse(list["FiscalYear"].ToString());
+                comment.Quarter = Int32.Parse(list["Quarter"].ToString());
+                comment.ProjectID = Int32.Parse(list["ProjectID"].ToString());
+                comment.FocusID = Int32.Parse(list["StatusID"].ToString());
+                comment.Comments = list["Comments"].ToString();
+
+                comments.Add(comment);
+            }
+
+            fetch.Connection.Close();
+
+            return comments;
+        }
 
         //Determines the current fiscal year based on the current month.
         public static int GetFiscalYear()
