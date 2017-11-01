@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabOverview = new System.Windows.Forms.TabControl();
             this.tabPageOverview = new System.Windows.Forms.TabPage();
             this.dgvOverview = new System.Windows.Forms.DataGridView();
@@ -59,15 +59,17 @@
             this.lblTeams = new System.Windows.Forms.Label();
             this.tabPageComments = new System.Windows.Forms.TabPage();
             this.btnCommAdd = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.txtFocusComments = new System.Windows.Forms.TextBox();
+            this.cbFocusProject = new System.Windows.Forms.ComboBox();
+            this.cbFocusQuarter = new System.Windows.Forms.ComboBox();
+            this.cbFocusYear = new System.Windows.Forms.ComboBox();
             this.lblComments = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.lblComQuar = new System.Windows.Forms.Label();
             this.lblComYear = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.cbFocus = new System.Windows.Forms.ComboBox();
+            this.lblFocus = new System.Windows.Forms.Label();
             this.tabOverview.SuspendLayout();
             this.tabPageOverview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOverview)).BeginInit();
@@ -105,14 +107,14 @@
             // 
             // dgvOverview
             // 
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvOverview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvOverview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvOverview.ColumnHeadersHeight = 28;
             this.dgvOverview.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.clmYear,
@@ -122,15 +124,15 @@
             this.clmDone,
             this.clmHiatus,
             this.clmCancelled});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvOverview.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dgvOverview.Location = new System.Drawing.Point(6, 75);
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvOverview.DefaultCellStyle = dataGridViewCellStyle4;
+            this.dgvOverview.Location = new System.Drawing.Point(3, 145);
             this.dgvOverview.Name = "dgvOverview";
             this.dgvOverview.RowHeadersVisible = false;
             this.dgvOverview.Size = new System.Drawing.Size(705, 148);
@@ -272,7 +274,7 @@
             this.cbDeptID.Location = new System.Drawing.Point(156, 115);
             this.cbDeptID.Name = "cbDeptID";
             this.cbDeptID.Size = new System.Drawing.Size(100, 28);
-            this.cbDeptID.TabIndex = 10;
+            this.cbDeptID.TabIndex = 3;
             // 
             // cbTeamID
             // 
@@ -280,7 +282,7 @@
             this.cbTeamID.Location = new System.Drawing.Point(156, 67);
             this.cbTeamID.Name = "cbTeamID";
             this.cbTeamID.Size = new System.Drawing.Size(100, 28);
-            this.cbTeamID.TabIndex = 9;
+            this.cbTeamID.TabIndex = 2;
             // 
             // cbDelTeam
             // 
@@ -288,7 +290,7 @@
             this.cbDelTeam.Location = new System.Drawing.Point(385, 67);
             this.cbDelTeam.Name = "cbDelTeam";
             this.cbDelTeam.Size = new System.Drawing.Size(121, 28);
-            this.cbDelTeam.TabIndex = 8;
+            this.cbDelTeam.TabIndex = 5;
             // 
             // lblDeptID
             // 
@@ -304,7 +306,7 @@
             this.btnDelTeam.Location = new System.Drawing.Point(396, 118);
             this.btnDelTeam.Name = "btnDelTeam";
             this.btnDelTeam.Size = new System.Drawing.Size(99, 29);
-            this.btnDelTeam.TabIndex = 5;
+            this.btnDelTeam.TabIndex = 6;
             this.btnDelTeam.Text = "Remove Team";
             this.btnDelTeam.UseVisualStyleBackColor = true;
             this.btnDelTeam.Click += new System.EventHandler(this.btnDelTeam_Click);
@@ -324,7 +326,7 @@
             this.txtTeamName.Location = new System.Drawing.Point(156, 25);
             this.txtTeamName.Name = "txtTeamName";
             this.txtTeamName.Size = new System.Drawing.Size(100, 26);
-            this.txtTeamName.TabIndex = 2;
+            this.txtTeamName.TabIndex = 1;
             // 
             // lblTeamID
             // 
@@ -338,7 +340,7 @@
             // lblTeams
             // 
             this.lblTeams.AutoSize = true;
-            this.lblTeams.Location = new System.Drawing.Point(31, 31);
+            this.lblTeams.Location = new System.Drawing.Point(31, 28);
             this.lblTeams.Name = "lblTeams";
             this.lblTeams.Size = new System.Drawing.Size(99, 20);
             this.lblTeams.TabIndex = 0;
@@ -346,11 +348,13 @@
             // 
             // tabPageComments
             // 
+            this.tabPageComments.Controls.Add(this.lblFocus);
+            this.tabPageComments.Controls.Add(this.cbFocus);
             this.tabPageComments.Controls.Add(this.btnCommAdd);
-            this.tabPageComments.Controls.Add(this.textBox1);
-            this.tabPageComments.Controls.Add(this.comboBox3);
-            this.tabPageComments.Controls.Add(this.comboBox2);
-            this.tabPageComments.Controls.Add(this.comboBox1);
+            this.tabPageComments.Controls.Add(this.txtFocusComments);
+            this.tabPageComments.Controls.Add(this.cbFocusProject);
+            this.tabPageComments.Controls.Add(this.cbFocusQuarter);
+            this.tabPageComments.Controls.Add(this.cbFocusYear);
             this.tabPageComments.Controls.Add(this.lblComments);
             this.tabPageComments.Controls.Add(this.label3);
             this.tabPageComments.Controls.Add(this.lblComQuar);
@@ -365,49 +369,50 @@
             // 
             // btnCommAdd
             // 
-            this.btnCommAdd.Location = new System.Drawing.Point(564, 135);
+            this.btnCommAdd.Location = new System.Drawing.Point(564, 324);
             this.btnCommAdd.Name = "btnCommAdd";
             this.btnCommAdd.Size = new System.Drawing.Size(113, 29);
-            this.btnCommAdd.TabIndex = 8;
+            this.btnCommAdd.TabIndex = 6;
             this.btnCommAdd.Text = "Add Comment";
             this.btnCommAdd.UseVisualStyleBackColor = true;
             // 
-            // textBox1
+            // txtFocusComments
             // 
-            this.textBox1.Location = new System.Drawing.Point(22, 170);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(655, 182);
-            this.textBox1.TabIndex = 7;
+            this.txtFocusComments.Location = new System.Drawing.Point(22, 127);
+            this.txtFocusComments.Multiline = true;
+            this.txtFocusComments.Name = "txtFocusComments";
+            this.txtFocusComments.Size = new System.Drawing.Size(655, 182);
+            this.txtFocusComments.TabIndex = 5;
             // 
-            // comboBox3
+            // cbFocusProject
             // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(136, 93);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(121, 28);
-            this.comboBox3.TabIndex = 6;
+            this.cbFocusProject.FormattingEnabled = true;
+            this.cbFocusProject.Location = new System.Drawing.Point(388, 15);
+            this.cbFocusProject.Name = "cbFocusProject";
+            this.cbFocusProject.Size = new System.Drawing.Size(121, 28);
+            this.cbFocusProject.TabIndex = 3;
             // 
-            // comboBox2
+            // cbFocusQuarter
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(136, 56);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 28);
-            this.comboBox2.TabIndex = 5;
+            this.cbFocusQuarter.FormattingEnabled = true;
+            this.cbFocusQuarter.Location = new System.Drawing.Point(136, 56);
+            this.cbFocusQuarter.Name = "cbFocusQuarter";
+            this.cbFocusQuarter.Size = new System.Drawing.Size(121, 28);
+            this.cbFocusQuarter.TabIndex = 2;
             // 
-            // comboBox1
+            // cbFocusYear
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(136, 15);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 28);
-            this.comboBox1.TabIndex = 4;
+            this.cbFocusYear.FormattingEnabled = true;
+            this.cbFocusYear.Location = new System.Drawing.Point(136, 15);
+            this.cbFocusYear.Name = "cbFocusYear";
+            this.cbFocusYear.Size = new System.Drawing.Size(121, 28);
+            this.cbFocusYear.TabIndex = 1;
+            this.cbFocusYear.SelectedIndexChanged += new System.EventHandler(this.cbFocusYear_SelectedIndexChanged);
             // 
             // lblComments
             // 
             this.lblComments.AutoSize = true;
-            this.lblComments.Location = new System.Drawing.Point(18, 147);
+            this.lblComments.Location = new System.Drawing.Point(18, 104);
             this.lblComments.Name = "lblComments";
             this.lblComments.Size = new System.Drawing.Size(138, 20);
             this.lblComments.TabIndex = 3;
@@ -416,7 +421,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(18, 96);
+            this.label3.Location = new System.Drawing.Point(320, 18);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 20);
             this.label3.TabIndex = 2;
@@ -448,6 +453,23 @@
             this.pictureBox1.Size = new System.Drawing.Size(661, 124);
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
+            // 
+            // cbFocus
+            // 
+            this.cbFocus.FormattingEnabled = true;
+            this.cbFocus.Location = new System.Drawing.Point(388, 56);
+            this.cbFocus.Name = "cbFocus";
+            this.cbFocus.Size = new System.Drawing.Size(121, 28);
+            this.cbFocus.TabIndex = 4;
+            // 
+            // lblFocus
+            // 
+            this.lblFocus.AutoSize = true;
+            this.lblFocus.Location = new System.Drawing.Point(320, 59);
+            this.lblFocus.Name = "lblFocus";
+            this.lblFocus.Size = new System.Drawing.Size(57, 20);
+            this.lblFocus.TabIndex = 10;
+            this.lblFocus.Text = "Focus:";
             // 
             // Form1
             // 
@@ -503,10 +525,10 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn clmCancelled;
         private System.Windows.Forms.TabPage tabPageComments;
         private System.Windows.Forms.Button btnCommAdd;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.ComboBox comboBox3;
-        private System.Windows.Forms.ComboBox comboBox2;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox txtFocusComments;
+        private System.Windows.Forms.ComboBox cbFocusProject;
+        private System.Windows.Forms.ComboBox cbFocusQuarter;
+        private System.Windows.Forms.ComboBox cbFocusYear;
         private System.Windows.Forms.Label lblComments;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblComQuar;
@@ -514,6 +536,8 @@
         private System.Windows.Forms.ComboBox cbTeamID;
         private System.Windows.Forms.ComboBox cbDeptID;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label lblFocus;
+        private System.Windows.Forms.ComboBox cbFocus;
     }
 }
 

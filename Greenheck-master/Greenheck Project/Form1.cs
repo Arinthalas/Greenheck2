@@ -20,7 +20,70 @@ namespace Greenheck_Project
             InitializeComponent();
         }
 
-       //auto-fills the drop-down boxes with existing data from the database
+        List<FocusComments> focusList = new List<FocusComments>();
+
+        //Populates the overview table with values
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+            //Fetches previous quarter data from the database and current statuses of projects.
+            List<Quarter> times = DataRetrievalClass.GetQuarter();
+            string[] status = new string[DataRetrievalClass.CountStatus()];
+
+            //Adds data from previous quarters to the table
+            int notStarted = 0;
+            int inProgress = 0;
+            int complete = 0;
+            int delayed = 0;
+            int cancelled = 0;
+
+            for (int i = 0; i < DataRetrievalClass.CountStatus(); i++)
+            {
+                status[i] = DataRetrievalClass.GetStatus(i).ToString();
+            }
+
+            dgvOverview.Rows.Add(DateTime.Now.Year, (DateTime.Now.Month / 3), status[0], status[1], status[2], status[3], status[4]);
+
+            foreach (Quarter q in times)
+            {
+
+                switch (q.statusID)
+                {
+                    case 1:
+                        notStarted++;
+                        break;
+
+                    case 2:
+                        inProgress++;
+                        break;
+
+                    case 3:
+                        complete++;
+                        break;
+
+                    case 4:
+                        delayed++;
+                        break;
+
+                    case 5:
+                        cancelled++;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            foreach (Quarter q in times)
+            {
+                dgvOverview.Rows.Add(q.fiscYear.Year, q.fiscQuarter, notStarted, inProgress, complete, delayed, cancelled);
+            }
+
+            //Adds current project status to the table.
+
+
+        }
+
+        //auto-fills the drop-down boxes with existing data from the database
         private void tabOverview_SelectedIndexChanged(object sender, EventArgs e)
         {
             //clears contents from department drop-down then refills, preventing multiple instances
@@ -67,8 +130,40 @@ namespace Greenheck_Project
                     cbTeamID.Items.Add(i);
                 }
             }
+
+            cbFocusYear.Items.Clear();
+            cbFocusQuarter.Items.Clear();
+            cbFocusProject.Items.Clear();
+            cbFocus.Items.Clear();
+            txtFocusComments.Clear();
+
+           
+
+            focusList = DataRetrievalClass.GetComments();
+
+            if (!cbFocusYear.Items.Contains(DateTime.Now.Year))
+            {
+                cbFocusYear.Items.Add(DateTime.Now.Year);
+            }
             
-            
+            foreach(FocusComments comment in focusList)
+            {
+                if (!cbFocusYear.Items.Contains(comment.FiscalYear.Year))
+                {
+                    cbFocusYear.Items.Add(comment.FiscalYear.Year);
+                }
+
+                if (!cbFocusProject.Items.Contains(comment.ProjectID))
+                {
+                    cbFocusProject.Items.Add(comment.ProjectID);
+                }
+
+                if (!cbFocusQuarter.Items.Contains(comment.Quarter))
+                {
+                    cbFocusQuarter.Items.Add(comment.Quarter);
+                }
+
+            }
         }
 
         //Filter method, when a department is chosen it filters the teams in the team drop-down
@@ -129,67 +224,7 @@ namespace Greenheck_Project
             }
         }
 
-        //Populates the overview table with values
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-            //Fetches previous quarter data from the database and current statuses of projects.
-            List<Quarter> times = DataRetrievalClass.GetQuarter();
-            string[] status = new string[DataRetrievalClass.CountStatus()];
-
-            //Adds data from previous quarters to the table
-            int notStarted = 0;
-            int inProgress = 0;
-            int complete = 0;
-            int delayed = 0;
-            int cancelled = 0;
-
-            for (int i = 0; i < DataRetrievalClass.CountStatus(); i++)
-            {
-                status[i] = DataRetrievalClass.GetStatus(i).ToString();
-            }
-
-            dgvOverview.Rows.Add(DateTime.Now.Year, (DateTime.Now.Month / 3), status[0], status[1], status[2], status[3], status[4]);
-
-            foreach(Quarter q in times)
-            {
-                
-                switch (q.statusID)
-                {
-                    case 1:
-                        notStarted++;
-                        break;
-
-                    case 2:
-                        inProgress++;
-                        break;
-
-                    case 3:
-                        complete++;
-                        break;
-
-                    case 4:
-                        delayed++;
-                        break;
-
-                    case 5:
-                        cancelled++;
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-            foreach(Quarter q in times)
-            {
-                dgvOverview.Rows.Add(q.fiscYear.Year, q.fiscQuarter, notStarted, inProgress, complete, delayed, cancelled);
-            }
-
-            //Adds current project status to the table.
-            
-            
-        }
-
+        //Generates a detailed report of Projects with a given status at a given time
         private void dgvOverview_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             Details next = new Details();
@@ -199,6 +234,11 @@ namespace Greenheck_Project
             next.passedQuarter = Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString());
 
             next.Show();
+        }
+
+        private void cbFocusYear_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
         }
     }
 }

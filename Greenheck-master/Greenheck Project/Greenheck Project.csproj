@@ -68,6 +68,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="Problem Domain\Department.cs" />
+    <Compile Include="Problem Domain\FocusComments.cs" />
     <Compile Include="Problem Domain\Project.cs" />
     <Compile Include="Problem Domain\Quarter.cs" />
     <Compile Include="Problem Domain\Teams.cs" />
