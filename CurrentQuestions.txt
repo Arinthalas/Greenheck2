@@ -1,0 +1,3 @@
+How many teams exist?
+How many potential teams would be able to exist within the business structure?
+Connected layer vs. Disconnected layer?
