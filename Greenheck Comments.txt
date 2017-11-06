@@ -1,0 +1,10 @@
+•	Edit functionality for Focus Comments
+•	Selection for team and department in Focus Comments Tab
+•	Focus should be multi-selection 
+•	Fiscal year and quarter combo box in overview tab
+•	On-going tab on dataset?
+•	Copy functionality in detail screen
+•	Detail data goes to selection screen
+•	Add Status ID to focus comments 
+•	TeamID automatically pulls the next number 
+•	Admin vs. HR
