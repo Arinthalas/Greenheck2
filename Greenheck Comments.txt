@@ -7,4 +7,4 @@
 •	Detail data goes to selection screen
 •	Add Status ID to focus comments 
 •	TeamID automatically pulls the next number 
-•	Admin vs. HR
+•	Two seperate projects (Admin vs. HR)
