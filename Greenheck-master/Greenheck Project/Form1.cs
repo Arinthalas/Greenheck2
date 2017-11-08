@@ -28,54 +28,36 @@ namespace Greenheck_Project
 
             //Fetches previous quarter data from the database and current statuses of projects.
             List<Quarter> times = DataRetrievalClass.GetQuarter();
-            string[] status = new string[DataRetrievalClass.CountStatus()];
+            int[] status = new int[DataRetrievalClass.CountStatus()];
 
-            //Adds data from previous quarters to the table
-            int notStarted = 0;
-            int inProgress = 0;
-            int complete = 0;
-            int delayed = 0;
-            int cancelled = 0;
+            ////Adds data from previous quarters to the table
+            //int notStarted = 0;
+            //int inProgress = 0;
+            //int complete = 0;
+            //int delayed = 0;
+            //int cancelled = 0;
 
-            for (int i = 0; i < DataRetrievalClass.CountStatus(); i++)
+            for (int i = 0; i < status.Length; i++)
             {
-                status[i] = DataRetrievalClass.GetStatus(i).ToString();
+                status[i] = DataRetrievalClass.GetStatus(i);
             }
 
-            dgvOverview.Rows.Add(DateTime.Now.Year, (DateTime.Now.Month / 3), status[0], status[1], status[2], status[3], status[4]);
+            dgvOverview.Rows.Add(DataRetrievalClass.GetFiscalYear(), DataRetrievalClass.GetFiscalQuarter(), 
+                                                    status[0], status[1], status[2], status[3], status[4]);
+            cbOvrYear.Items.Add(DataRetrievalClass.GetFiscalYear());
 
             foreach (Quarter q in times)
             {
-
-                switch (q.statusID)
+                if (!cbOvrYear.Items.Contains(q.fiscYear))
                 {
-                    case 1:
-                        notStarted++;
-                        break;
-
-                    case 2:
-                        inProgress++;
-                        break;
-
-                    case 3:
-                        complete++;
-                        break;
-
-                    case 4:
-                        delayed++;
-                        break;
-
-                    case 5:
-                        cancelled++;
-                        break;
-
-                    default:
-                        break;
+                    cbOvrYear.Items.Add(q.fiscYear);
                 }
-            }
-            foreach (Quarter q in times)
-            {
-                dgvOverview.Rows.Add(q.fiscYear.Year, q.fiscQuarter, notStarted, inProgress, complete, delayed, cancelled);
+
+                //if (Int32.Parse(dgvOverview.Rows.ToString()) != q.fiscYear)
+                //{
+                //    dgvOverview.Rows.Add(q.fiscYear, q.fiscQuarter, notStarted, inProgress, complete, delayed, cancelled);
+                //}
+                //dgvOverview.Rows.Add(q.fiscYear, q.fiscQuarter, notStarted, inProgress, complete, delayed, cancelled);
             }
 
             //Adds current project status to the table.
@@ -93,8 +75,8 @@ namespace Greenheck_Project
             List<Department> dept = Database.DataRetrievalClass.GetDept();
             foreach (Department d in dept)
             {
-                cbDept.Items.Add(d.deptName);
-                cbDeptID.Items.Add(d.deptID);
+                cbDept.Items.Add(d.DeptName);
+                cbDeptID.Items.Add(d.DeptID);
             }
 
 
@@ -113,22 +95,6 @@ namespace Greenheck_Project
             foreach (Teams t in them)
             {
                 cbDelTeam.Items.Add(t.name);
-            }
-
-            //populate team id drop-down with values that do not already exist.
-            cbTeamID.Items.Clear();
-            int[] ids = new int[them.Count];
-
-            for(int i=0; i < them.Count; i++)
-            {
-                ids[i] = them[i].id;
-            }
-            for(int i = 1; i < 50; i++)
-            {
-                if (!ids.Contains(i))
-                {
-                    cbTeamID.Items.Add(i);
-                }
             }
 
             cbFocusYear.Items.Clear();
@@ -172,9 +138,9 @@ namespace Greenheck_Project
         {
             cbTeams.Items.Clear();
             Department current = new Department();
-            current.deptName = cbDept.SelectedItem.ToString();
-            current.deptID = Database.DataRetrievalClass.GetDeptID(current.deptName);
-            List<Teams> them = Database.DataRetrievalClass.GetTeams(current.deptID);
+            current.DeptName = cbDept.SelectedItem.ToString();
+            current.DeptID = Database.DataRetrievalClass.GetDeptID(current.DeptName);
+            List<Teams> them = Database.DataRetrievalClass.GetTeams(current.DeptID);
             foreach (Teams t in them)
             {
                 cbTeams.Items.Add(t.name);
@@ -186,11 +152,11 @@ namespace Greenheck_Project
         {
             //Create a new Team object from data provided in the text and combo boxes
             Teams here = new Teams();
-            here.id= Int32.Parse(cbTeamID.SelectedItem.ToString());
+            here.id= DataRetrievalClass.GenerateTeamID() +1;
             here.name = txtTeamName.Text;
             
             //Check to see if a team with the same name or id exists. If so, display message and prevent creation.
-            if (Database.DataRetrievalClass.TeamExists(Convert.ToInt32(cbTeamID.SelectedValue), txtTeamName.Text))
+            if (Database.DataRetrievalClass.TeamExists(txtTeamName.Text))
             {
                 MessageBox.Show("The name of this team already exists, please choose another.");
             }
@@ -199,7 +165,6 @@ namespace Greenheck_Project
                 int dep = Int32.Parse(cbDeptID.SelectedItem.ToString());
                 DataRetrievalClass.CreateTeam(here.id, here.name, dep);
                 MessageBox.Show( txtTeamName.Text + " successfully created.");
-                cbTeamID.Refresh();
                 cbDeptID.Refresh();
                 txtTeamName.Clear();
             }
@@ -210,10 +175,11 @@ namespace Greenheck_Project
         {
             //Retrieve the ID of a team from the database by searching for the selected name in the drop-down.
             int teamID = DataRetrievalClass.GetTeamByName(cbDelTeam.SelectedItem.ToString());
+            string name = cbDelTeam.SelectedItem.ToString();
             cbDelTeam.Items.Remove(cbDelTeam.SelectedItem.ToString());
             //Deletes team from database and shows a confirmation message.
             DataRetrievalClass.DeleteTeam(teamID);
-            MessageBox.Show(cbDelTeam.SelectedItem + " has been terminated.");
+            MessageBox.Show(name + " has been terminated.");
 
             //Repopulates the drop-down list after removal.
             cbDelTeam.Items.Clear();
@@ -227,18 +193,29 @@ namespace Greenheck_Project
         //Generates a detailed report of Projects with a given status at a given time
         private void dgvOverview_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            Details next = new Details();
+            if (dgvOverview.CurrentCell.ColumnIndex > 1)
+            {
+                Details next = new Details();
 
-            next.passedInfo = Int32.Parse(dgvOverview.CurrentCell.Value.ToString());
-            next.passedYear = Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString());
-            next.passedQuarter = Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString());
+                next.passedInfo = Int32.Parse(dgvOverview.CurrentCell.Value.ToString());
+                next.passedYear = Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString());
+                next.passedQuarter = Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString());
 
-            next.Show();
+                next.Show();
+            }
         }
 
         private void cbFocusYear_SelectedIndexChanged(object sender, EventArgs e)
         {
             
+        }
+
+        private void btnFilter_Click(object sender, EventArgs e)
+        {
+            dgvOverview.Rows.Clear();
+            List<Quarter> selected = new List<Quarter>();
+
+            //selected = DataRetrievalClass.
         }
     }
 }

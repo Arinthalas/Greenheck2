@@ -8,8 +8,12 @@ namespace Greenheck_Project.Problem_Domain
 {
     class Department
     {
-        public string deptName;
-        public int deptID;
+        private string deptName;
+        private int deptID;
+
+        public string DeptName { get => deptName; set => deptName = value; }
+        public int DeptID { get => deptID; set => deptID = value; }
+
 
         //Creates an empty Department
         public Department() { }
@@ -17,8 +21,8 @@ namespace Greenheck_Project.Problem_Domain
         //Creates a Department with passed values.
         public Department(string who, int what)
         {
-            deptName = who;
-            deptID = what;
+            DeptName = who;
+            DeptID = what;
         }
     }
 }

@@ -91,16 +91,27 @@ namespace Greenheck_Project.Database
             return id;
         }
 
+        public static string GetTeamsByID(int id)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT TeamName FROM TeamTable WHERE TeamID = @param1";
+            fetch.Parameters.AddWithValue("@param1", id);
+
+            string name = fetch.ExecuteScalar().ToString();
+            return name;
+        }
 
         //Logic test to determine wether a team name or ID already exists in the database
-        public static bool TeamExists(int id, string name)
+        public static bool TeamExists(string name)
         {
             List<Teams> test = GetTeams();
             bool exist = false;
 
             foreach(Teams t in test)
             {
-                if(t.id == id || t.name == name)
+                if(t.name == name)
                 {
                     exist = true;
                 }
@@ -140,6 +151,16 @@ namespace Greenheck_Project.Database
             rem.Connection.Close();
         }
 
+        public static int GenerateTeamID()
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT MAX(TeamID) FROM TeamTable";
+
+            return Int32.Parse(fetch.ExecuteScalar().ToString());
+        }
+
         #endregion
 
         #region Department Methods
@@ -157,8 +178,8 @@ namespace Greenheck_Project.Database
             while (list.Read())
             {
                 Department us = new Department();
-                us.deptID = Convert.ToInt32(list["DepartmentID"]);
-                us.deptName = list["DepartmentName"].ToString();
+                us.DeptID = Convert.ToInt32(list["DepartmentID"]);
+                us.DeptName = list["DepartmentName"].ToString();
                 them.Add(us);
             }
             fetch.Connection.Close();
@@ -181,12 +202,12 @@ namespace Greenheck_Project.Database
             while (list.Read())
             {
                 Department us = new Department();
-                us.deptID = Convert.ToInt32(list["DepartmentID"]);
+                us.DeptID = Convert.ToInt32(list["DepartmentID"]);
                 them.Add(us);
             }
             fetch.Connection.Close();
 
-            return them[0].deptID;
+            return them[0].DeptID;
         }
 
 #endregion
@@ -221,7 +242,32 @@ namespace Greenheck_Project.Database
             while (list.Read())
             {
                 Quarter thus = new Quarter();
-                thus.fiscYear = Convert.ToDateTime(list["FiscalYear"]);
+                thus.fiscYear = Convert.ToInt32(list["FiscalYear"]);
+                thus.fiscQuarter = Convert.ToInt32(list["Quarter"]);
+                thus.projectID = Convert.ToInt32(list["ProjectID"]);
+                thus.statusID = Convert.ToInt32(list["StatusID"]);
+                thus.comments = list["Comments"].ToString();
+
+                quarterList.Add(thus);
+            }
+
+            return quarterList;
+        }
+
+        public static List<Quarter> GetQuarter(DateTime year)
+        {
+            List<Quarter> quarterList = new List<Quarter>();
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT FiscalYear, Quarter, ProjectID, StatusID, Comments FROM FocusCommentsTable WHERE FiscalYear = @param1";
+            fetch.Parameters.AddWithValue("@param1", year);
+            SqlDataReader list = fetch.ExecuteReader();
+
+            while (list.Read())
+            {
+                Quarter thus = new Quarter();
+                thus.fiscYear = Convert.ToInt32(list["FiscalYear"]);
                 thus.fiscQuarter = Convert.ToInt32(list["Quarter"]);
                 thus.projectID = Convert.ToInt32(list["ProjectID"]);
                 thus.statusID = Convert.ToInt32(list["StatusID"]);
@@ -274,6 +320,21 @@ namespace Greenheck_Project.Database
         //    return data;
         //}
 
+        //public static List<> GetDetails()
+        //{
+
+        //}
+
+        //public static List<Project> GetProject(int year, int quarter, int status)
+        //{
+        //    List<Project> projects = new List<Project>();
+
+        //    SqlCommand fetch = new SqlCommand();
+        //    fetch.Connection = GetConn();
+
+        //    fetch.CommandText = "SELECT * FROM ProjectTable WHERE "
+        //}
+
         public static List<FocusComments> GetComments()
         {
             List<FocusComments> comments = new List<FocusComments>();
@@ -309,13 +370,44 @@ namespace Greenheck_Project.Database
             int year = when.Year;
             if (when.Month > 9)
             {
-                return (year++);
+                return (year+1);
             }
             else
             {
                 return year;
             }
 
+        }
+
+        public static int GetFiscalQuarter()
+        {
+            int q;
+            DateTime when = DateTime.Now;
+
+            if(when.Month > 9)
+            {
+                q = 1;
+            }
+            else
+            {
+                if(when.Month > 6)
+                {
+                    q = 4;
+                }
+                else
+                {
+                    if(when.Month > 3)
+                    {
+                        q = 3;
+                    }
+                    else
+                    {
+                        q = 2;
+                    }
+                }
+            }
+
+            return q;
         }
     }
 }
