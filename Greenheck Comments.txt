@@ -6,5 +6,4 @@
 •	Copy functionality in detail screen
 •	Detail data goes to selection screen
 •	Add Status ID to focus comments 
-•	TeamID automatically pulls the next number 
 •	Two seperate projects (Admin vs. HR)
