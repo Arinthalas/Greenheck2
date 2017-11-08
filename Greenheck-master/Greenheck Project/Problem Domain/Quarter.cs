@@ -8,7 +8,7 @@ namespace Greenheck_Project.Problem_Domain
 {
     class Quarter
     {
-        public DateTime fiscYear;
+        public int fiscYear;
         public int fiscQuarter;
         public int statusNotStart;
         public int statusInProgress;
@@ -26,7 +26,7 @@ namespace Greenheck_Project.Problem_Domain
         }
 
         //Creates a Quarter object with passed values
-        public Quarter(DateTime year, int q, int ns, int ip, int c, int d, int a)
+        public Quarter(int year, int q, int ns, int ip, int c, int d, int a)
         {
             fiscQuarter = q;
             fiscYear = year;

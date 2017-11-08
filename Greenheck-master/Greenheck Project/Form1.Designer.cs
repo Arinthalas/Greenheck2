@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabOverview = new System.Windows.Forms.TabControl();
             this.tabPageOverview = new System.Windows.Forms.TabPage();
             this.dgvOverview = new System.Windows.Forms.DataGridView();
@@ -49,15 +49,15 @@
             this.cbTeams = new System.Windows.Forms.ComboBox();
             this.tabPageTeam = new System.Windows.Forms.TabPage();
             this.cbDeptID = new System.Windows.Forms.ComboBox();
-            this.cbTeamID = new System.Windows.Forms.ComboBox();
             this.cbDelTeam = new System.Windows.Forms.ComboBox();
             this.lblDeptID = new System.Windows.Forms.Label();
             this.btnDelTeam = new System.Windows.Forms.Button();
             this.btnCreateTeam = new System.Windows.Forms.Button();
             this.txtTeamName = new System.Windows.Forms.TextBox();
-            this.lblTeamID = new System.Windows.Forms.Label();
             this.lblTeams = new System.Windows.Forms.Label();
             this.tabPageComments = new System.Windows.Forms.TabPage();
+            this.lblFocus = new System.Windows.Forms.Label();
+            this.cbFocus = new System.Windows.Forms.ComboBox();
             this.btnCommAdd = new System.Windows.Forms.Button();
             this.txtFocusComments = new System.Windows.Forms.TextBox();
             this.cbFocusProject = new System.Windows.Forms.ComboBox();
@@ -68,8 +68,9 @@
             this.lblComQuar = new System.Windows.Forms.Label();
             this.lblComYear = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.cbFocus = new System.Windows.Forms.ComboBox();
-            this.lblFocus = new System.Windows.Forms.Label();
+            this.cbOvrYear = new System.Windows.Forms.ComboBox();
+            this.lblOvrYear = new System.Windows.Forms.Label();
+            this.btnFilter = new System.Windows.Forms.Button();
             this.tabOverview.SuspendLayout();
             this.tabPageOverview.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOverview)).BeginInit();
@@ -85,36 +86,40 @@
             this.tabOverview.Controls.Add(this.tabPageSelection);
             this.tabOverview.Controls.Add(this.tabPageTeam);
             this.tabOverview.Controls.Add(this.tabPageComments);
+            this.tabOverview.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.tabOverview.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.tabOverview.Location = new System.Drawing.Point(12, 142);
+            this.tabOverview.Location = new System.Drawing.Point(0, 154);
             this.tabOverview.Name = "tabOverview";
             this.tabOverview.SelectedIndex = 0;
-            this.tabOverview.Size = new System.Drawing.Size(723, 401);
+            this.tabOverview.Size = new System.Drawing.Size(747, 401);
             this.tabOverview.TabIndex = 0;
             this.tabOverview.Tag = "";
             this.tabOverview.SelectedIndexChanged += new System.EventHandler(this.tabOverview_SelectedIndexChanged);
             // 
             // tabPageOverview
             // 
+            this.tabPageOverview.Controls.Add(this.btnFilter);
+            this.tabPageOverview.Controls.Add(this.lblOvrYear);
+            this.tabPageOverview.Controls.Add(this.cbOvrYear);
             this.tabPageOverview.Controls.Add(this.dgvOverview);
             this.tabPageOverview.Location = new System.Drawing.Point(4, 29);
             this.tabPageOverview.Name = "tabPageOverview";
             this.tabPageOverview.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOverview.Size = new System.Drawing.Size(715, 368);
+            this.tabPageOverview.Size = new System.Drawing.Size(739, 368);
             this.tabPageOverview.TabIndex = 0;
             this.tabPageOverview.Text = "Overview";
             this.tabPageOverview.UseVisualStyleBackColor = true;
             // 
             // dgvOverview
             // 
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvOverview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvOverview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvOverview.ColumnHeadersHeight = 28;
             this.dgvOverview.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.clmYear,
@@ -124,14 +129,14 @@
             this.clmDone,
             this.clmHiatus,
             this.clmCancelled});
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvOverview.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvOverview.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvOverview.Location = new System.Drawing.Point(3, 145);
             this.dgvOverview.Name = "dgvOverview";
             this.dgvOverview.RowHeadersVisible = false;
@@ -190,7 +195,7 @@
             this.tabPageSelection.Location = new System.Drawing.Point(4, 29);
             this.tabPageSelection.Name = "tabPageSelection";
             this.tabPageSelection.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageSelection.Size = new System.Drawing.Size(715, 368);
+            this.tabPageSelection.Size = new System.Drawing.Size(739, 368);
             this.tabPageSelection.TabIndex = 1;
             this.tabPageSelection.Text = "Selection";
             this.tabPageSelection.UseVisualStyleBackColor = true;
@@ -252,18 +257,16 @@
             // tabPageTeam
             // 
             this.tabPageTeam.Controls.Add(this.cbDeptID);
-            this.tabPageTeam.Controls.Add(this.cbTeamID);
             this.tabPageTeam.Controls.Add(this.cbDelTeam);
             this.tabPageTeam.Controls.Add(this.lblDeptID);
             this.tabPageTeam.Controls.Add(this.btnDelTeam);
             this.tabPageTeam.Controls.Add(this.btnCreateTeam);
             this.tabPageTeam.Controls.Add(this.txtTeamName);
-            this.tabPageTeam.Controls.Add(this.lblTeamID);
             this.tabPageTeam.Controls.Add(this.lblTeams);
             this.tabPageTeam.Location = new System.Drawing.Point(4, 29);
             this.tabPageTeam.Name = "tabPageTeam";
             this.tabPageTeam.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTeam.Size = new System.Drawing.Size(715, 368);
+            this.tabPageTeam.Size = new System.Drawing.Size(739, 368);
             this.tabPageTeam.TabIndex = 2;
             this.tabPageTeam.Text = "Teams";
             this.tabPageTeam.UseVisualStyleBackColor = true;
@@ -275,14 +278,6 @@
             this.cbDeptID.Name = "cbDeptID";
             this.cbDeptID.Size = new System.Drawing.Size(100, 28);
             this.cbDeptID.TabIndex = 3;
-            // 
-            // cbTeamID
-            // 
-            this.cbTeamID.FormattingEnabled = true;
-            this.cbTeamID.Location = new System.Drawing.Point(156, 67);
-            this.cbTeamID.Name = "cbTeamID";
-            this.cbTeamID.Size = new System.Drawing.Size(100, 28);
-            this.cbTeamID.TabIndex = 2;
             // 
             // cbDelTeam
             // 
@@ -328,15 +323,6 @@
             this.txtTeamName.Size = new System.Drawing.Size(100, 26);
             this.txtTeamName.TabIndex = 1;
             // 
-            // lblTeamID
-            // 
-            this.lblTeamID.AutoSize = true;
-            this.lblTeamID.Location = new System.Drawing.Point(31, 70);
-            this.lblTeamID.Name = "lblTeamID";
-            this.lblTeamID.Size = new System.Drawing.Size(74, 20);
-            this.lblTeamID.TabIndex = 1;
-            this.lblTeamID.Text = "Team ID:";
-            // 
             // lblTeams
             // 
             this.lblTeams.AutoSize = true;
@@ -362,10 +348,27 @@
             this.tabPageComments.Location = new System.Drawing.Point(4, 29);
             this.tabPageComments.Name = "tabPageComments";
             this.tabPageComments.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageComments.Size = new System.Drawing.Size(715, 368);
+            this.tabPageComments.Size = new System.Drawing.Size(739, 368);
             this.tabPageComments.TabIndex = 3;
             this.tabPageComments.Text = "Focus Comments";
             this.tabPageComments.UseVisualStyleBackColor = true;
+            // 
+            // lblFocus
+            // 
+            this.lblFocus.AutoSize = true;
+            this.lblFocus.Location = new System.Drawing.Point(320, 59);
+            this.lblFocus.Name = "lblFocus";
+            this.lblFocus.Size = new System.Drawing.Size(57, 20);
+            this.lblFocus.TabIndex = 10;
+            this.lblFocus.Text = "Focus:";
+            // 
+            // cbFocus
+            // 
+            this.cbFocus.FormattingEnabled = true;
+            this.cbFocus.Location = new System.Drawing.Point(388, 56);
+            this.cbFocus.Name = "cbFocus";
+            this.cbFocus.Size = new System.Drawing.Size(121, 28);
+            this.cbFocus.TabIndex = 4;
             // 
             // btnCommAdd
             // 
@@ -447,6 +450,7 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox1.ImageLocation = "H:\\private\\CIS 480 Capstone\\ghlogo_notag.png";
             this.pictureBox1.Location = new System.Drawing.Point(12, 12);
             this.pictureBox1.Name = "pictureBox1";
@@ -454,22 +458,32 @@
             this.pictureBox1.TabIndex = 1;
             this.pictureBox1.TabStop = false;
             // 
-            // cbFocus
+            // cbOvrYear
             // 
-            this.cbFocus.FormattingEnabled = true;
-            this.cbFocus.Location = new System.Drawing.Point(388, 56);
-            this.cbFocus.Name = "cbFocus";
-            this.cbFocus.Size = new System.Drawing.Size(121, 28);
-            this.cbFocus.TabIndex = 4;
+            this.cbOvrYear.FormattingEnabled = true;
+            this.cbOvrYear.Location = new System.Drawing.Point(106, 43);
+            this.cbOvrYear.Name = "cbOvrYear";
+            this.cbOvrYear.Size = new System.Drawing.Size(121, 28);
+            this.cbOvrYear.TabIndex = 1;
             // 
-            // lblFocus
+            // lblOvrYear
             // 
-            this.lblFocus.AutoSize = true;
-            this.lblFocus.Location = new System.Drawing.Point(320, 59);
-            this.lblFocus.Name = "lblFocus";
-            this.lblFocus.Size = new System.Drawing.Size(57, 20);
-            this.lblFocus.TabIndex = 10;
-            this.lblFocus.Text = "Focus:";
+            this.lblOvrYear.AutoSize = true;
+            this.lblOvrYear.Location = new System.Drawing.Point(8, 46);
+            this.lblOvrYear.Name = "lblOvrYear";
+            this.lblOvrYear.Size = new System.Drawing.Size(92, 20);
+            this.lblOvrYear.TabIndex = 2;
+            this.lblOvrYear.Text = "Fiscal Year:";
+            // 
+            // btnFilter
+            // 
+            this.btnFilter.Location = new System.Drawing.Point(250, 43);
+            this.btnFilter.Name = "btnFilter";
+            this.btnFilter.Size = new System.Drawing.Size(121, 28);
+            this.btnFilter.TabIndex = 3;
+            this.btnFilter.Text = "Filter";
+            this.btnFilter.UseVisualStyleBackColor = true;
+            this.btnFilter.Click += new System.EventHandler(this.btnFilter_Click);
             // 
             // Form1
             // 
@@ -484,6 +498,7 @@
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabOverview.ResumeLayout(false);
             this.tabPageOverview.ResumeLayout(false);
+            this.tabPageOverview.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvOverview)).EndInit();
             this.tabPageSelection.ResumeLayout(false);
             this.tabPageSelection.PerformLayout();
@@ -511,7 +526,6 @@
         private System.Windows.Forms.Button btnDelTeam;
         private System.Windows.Forms.Button btnCreateTeam;
         private System.Windows.Forms.TextBox txtTeamName;
-        private System.Windows.Forms.Label lblTeamID;
         private System.Windows.Forms.Label lblTeams;
         private System.Windows.Forms.Label lblDeptID;
         private System.Windows.Forms.DataGridView dgvOverview;
@@ -533,11 +547,13 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label lblComQuar;
         private System.Windows.Forms.Label lblComYear;
-        private System.Windows.Forms.ComboBox cbTeamID;
         private System.Windows.Forms.ComboBox cbDeptID;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label lblFocus;
         private System.Windows.Forms.ComboBox cbFocus;
+        private System.Windows.Forms.Label lblOvrYear;
+        private System.Windows.Forms.ComboBox cbOvrYear;
+        private System.Windows.Forms.Button btnFilter;
     }
 }
 
