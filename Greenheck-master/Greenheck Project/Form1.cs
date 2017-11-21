@@ -30,12 +30,7 @@ namespace Greenheck_Project
             List<Quarter> times = DataRetrievalClass.GetQuarter();
             int[] status = new int[DataRetrievalClass.CountStatus()];
 
-            ////Adds data from previous quarters to the table
-            //int notStarted = 0;
-            //int inProgress = 0;
-            //int complete = 0;
-            //int delayed = 0;
-            //int cancelled = 0;
+            List<int> years = DataRetrievalClass.GetYears();
 
             for (int i = 0; i < status.Length; i++)
             {
@@ -52,17 +47,51 @@ namespace Greenheck_Project
                 {
                     cbOvrYear.Items.Add(q.fiscYear);
                 }
-
-                //if (Int32.Parse(dgvOverview.Rows.ToString()) != q.fiscYear)
-                //{
-                //    dgvOverview.Rows.Add(q.fiscYear, q.fiscQuarter, notStarted, inProgress, complete, delayed, cancelled);
-                //}
-                //dgvOverview.Rows.Add(q.fiscYear, q.fiscQuarter, notStarted, inProgress, complete, delayed, cancelled);
             }
 
-            //Adds current project status to the table.
+            foreach(int year in years)
+            {
+                List<Quarter> qYear = DataRetrievalClass.GetQuarter(year);
+                for (int i = 1; i <= DataRetrievalClass.FindQuarter(year); i++)
+                {
+                    //Adds data from previous quarters to the table
+                    int notStarted = 0;
+                    int inProgress = 0;
+                    int complete = 0;
+                    int delayed = 0;
+                    int cancelled = 0;
 
+                    foreach (Quarter q in qYear)
+                    {
+                        if(q.fiscQuarter == i)
+                        {
+                            switch (q.statusID)
+                            {
+                                case 1:
+                                    notStarted++;
+                                    break;
 
+                                case 2:
+                                    inProgress++;
+                                    break;
+
+                                case 3:
+                                    complete++;
+                                    break;
+
+                                case 4:
+                                    delayed++;
+                                    break;
+
+                                case 5:
+                                    cancelled++;
+                                    break;
+                            }
+                        }
+                    }
+                    dgvOverview.Rows.Add(year, i, notStarted, inProgress, complete, delayed, cancelled);
+                }
+            }
         }
 
         //auto-fills the drop-down boxes with existing data from the database
@@ -78,7 +107,6 @@ namespace Greenheck_Project
                 cbDept.Items.Add(d.DeptName);
                 cbDeptID.Items.Add(d.DeptID);
             }
-
 
             //same process as above, but for the team drop-down.
             cbTeams.Items.Clear();
@@ -114,9 +142,9 @@ namespace Greenheck_Project
             
             foreach(FocusComments comment in focusList)
             {
-                if (!cbFocusYear.Items.Contains(comment.FiscalYear.Year))
+                if (!cbFocusYear.Items.Contains(comment.FiscalYear))
                 {
-                    cbFocusYear.Items.Add(comment.FiscalYear.Year);
+                    cbFocusYear.Items.Add(comment.FiscalYear);
                 }
 
                 if (!cbFocusProject.Items.Contains(comment.ProjectID))
@@ -128,7 +156,6 @@ namespace Greenheck_Project
                 {
                     cbFocusQuarter.Items.Add(comment.Quarter);
                 }
-
             }
         }
 
@@ -197,7 +224,9 @@ namespace Greenheck_Project
             {
                 Details next = new Details();
 
-                next.passedInfo = Int32.Parse(dgvOverview.CurrentCell.Value.ToString());
+                //next.passedInfo = Int32.Parse(dgvOverview.CurrentCell.Value.ToString());
+                //next.passedInfo = Int32.Parse(dgvOverview.CurrentCell.ColumnIndex.);
+                next.passedInfo = dgvOverview.CurrentCell.ColumnIndex -2;
                 next.passedYear = Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString());
                 next.passedQuarter = Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString());
 
@@ -213,9 +242,47 @@ namespace Greenheck_Project
         private void btnFilter_Click(object sender, EventArgs e)
         {
             dgvOverview.Rows.Clear();
-            List<Quarter> selected = new List<Quarter>();
+            int selectedYear = Int32.Parse(cbOvrYear.SelectedItem.ToString());
+            List<Quarter> selected = DataRetrievalClass.GetQuarter(selectedYear);
 
-            //selected = DataRetrievalClass.
+            for(int i = 1; i <= DataRetrievalClass.FindQuarter(selectedYear); i++)
+            {
+                int notStarted = 0;
+                int inProgress = 0;
+                int complete = 0;
+                int delayed = 0;
+                int cancelled = 0;
+
+                foreach (Quarter q in selected)
+                {
+                    if (q.fiscQuarter == i)
+                    {
+                        switch (q.statusID)
+                        {
+                            case 1:
+                                notStarted++;
+                                break;
+
+                            case 2:
+                                inProgress++;
+                                break;
+
+                            case 3:
+                                complete++;
+                                break;
+
+                            case 4:
+                                delayed++;
+                                break;
+
+                            case 5:
+                                cancelled++;
+                                break;
+                        }
+                    }
+                }
+                dgvOverview.Rows.Add(selectedYear, i, notStarted, inProgress, complete, delayed, cancelled);
+            }
         }
     }
 }

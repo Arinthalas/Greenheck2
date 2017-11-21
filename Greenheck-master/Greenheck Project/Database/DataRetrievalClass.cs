@@ -11,7 +11,7 @@ namespace Greenheck_Project.Database
     class DataRetrievalClass
     {
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sab_5\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -254,7 +254,7 @@ namespace Greenheck_Project.Database
             return quarterList;
         }
 
-        public static List<Quarter> GetQuarter(DateTime year)
+        public static List<Quarter> GetQuarter(int year)
         {
             List<Quarter> quarterList = new List<Quarter>();
             SqlCommand fetch = new SqlCommand();
@@ -349,7 +349,7 @@ namespace Greenheck_Project.Database
             while (list.Read())
             {
                 FocusComments comment = new FocusComments();
-                comment.FiscalYear = DateTime.Parse(list["FiscalYear"].ToString());
+                comment.FiscalYear = Int32.Parse(list["FiscalYear"].ToString());
                 comment.Quarter = Int32.Parse(list["Quarter"].ToString());
                 comment.ProjectID = Int32.Parse(list["ProjectID"].ToString());
                 comment.FocusID = Int32.Parse(list["StatusID"].ToString());
@@ -377,6 +377,37 @@ namespace Greenheck_Project.Database
                 return year;
             }
 
+        }
+
+        public static List<int> GetYears()
+        {
+            List<int> years = new List<int>();
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT DISTINCT FiscalYear FROM FocusCommentsTable ORDER BY FiscalYear DESC";
+
+            SqlDataReader reader = fetch.ExecuteReader();
+
+            while (reader.Read())
+            {
+                int year = Int32.Parse(reader["FiscalYear"].ToString());
+                years.Add(year);
+            }
+
+            return years;
+        }
+
+        public static int FindQuarter(int year)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT MAX(Quarter) FROM FocusCommentsTable WHERE FiscalYear = @param1";
+
+            fetch.Parameters.AddWithValue("@param1", year);
+
+            return Int32.Parse(fetch.ExecuteScalar().ToString());
         }
 
         public static int GetFiscalQuarter()

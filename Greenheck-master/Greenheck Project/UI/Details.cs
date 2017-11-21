@@ -29,15 +29,11 @@ namespace Greenheck_Project.UI
 
             foreach(FocusComments c in list)
             {
-                if(c.FiscalYear.Year == passedYear && c.Quarter == passedQuarter && c.FocusID == passedInfo)
+                if(c.FiscalYear == passedYear && c.Quarter == passedQuarter && c.FocusID == passedInfo)
                 {
-                    listView1.Items.Add(c.ProjectID.ToString());
-                    listView1.Items.Add(c.FocusID.ToString());
-                    listView1.Items.Add(c.Quarter.ToString());
-                    listView1.Items.Add(c.Comments);
+                    dgvDetail.Rows.Add(c.ProjectID, c.FocusID, c.Comments);
                 }
             }
-
         }
     }
 }
