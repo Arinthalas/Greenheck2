@@ -20,11 +20,14 @@ namespace Greenheck_Project
             InitializeComponent();
         }
 
+
+
         List<FocusComments> focusList = new List<FocusComments>();
 
         //Populates the overview table with values
         private void Form1_Load(object sender, EventArgs e)
         {
+            dgvOverview.AutoGenerateColumns = true;
 
             //Fetches previous quarter data from the database and current statuses of projects.
             List<Quarter> times = DataRetrievalClass.GetQuarter();
@@ -222,10 +225,9 @@ namespace Greenheck_Project
         {
             if (dgvOverview.CurrentCell.ColumnIndex > 1)
             {
-                Details next = new Details();
+                Details next = new Details(Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString()),
+                    Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString()), dgvOverview.CurrentCell.ColumnIndex - 2);
 
-                //next.passedInfo = Int32.Parse(dgvOverview.CurrentCell.Value.ToString());
-                //next.passedInfo = Int32.Parse(dgvOverview.CurrentCell.ColumnIndex.);
                 next.passedInfo = dgvOverview.CurrentCell.ColumnIndex -2;
                 next.passedYear = Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString());
                 next.passedQuarter = Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString());

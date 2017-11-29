@@ -40,30 +40,27 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(359, 423);
-            this.button1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button1.Location = new System.Drawing.Point(269, 344);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(100, 28);
+            this.button1.Size = new System.Drawing.Size(75, 23);
             this.button1.TabIndex = 1;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(251, 423);
-            this.button2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button2.Location = new System.Drawing.Point(188, 344);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(100, 28);
+            this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 2;
             this.button2.Text = "button2";
             this.button2.UseVisualStyleBackColor = true;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(143, 422);
-            this.button3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button3.Location = new System.Drawing.Point(107, 343);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(100, 28);
+            this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 3;
             this.button3.Text = "button3";
             this.button3.UseVisualStyleBackColor = true;
@@ -75,10 +72,12 @@
             this.Project,
             this.colFocus,
             this.colComment});
-            this.dgvDetail.Location = new System.Drawing.Point(13, 13);
+            this.dgvDetail.Location = new System.Drawing.Point(10, 11);
+            this.dgvDetail.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dgvDetail.Name = "dgvDetail";
+            this.dgvDetail.RowHeadersVisible = false;
             this.dgvDetail.RowTemplate.Height = 24;
-            this.dgvDetail.Size = new System.Drawing.Size(450, 150);
+            this.dgvDetail.Size = new System.Drawing.Size(338, 122);
             this.dgvDetail.TabIndex = 4;
             // 
             // Project
@@ -98,14 +97,13 @@
             // 
             // Details
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(475, 466);
+            this.ClientSize = new System.Drawing.Size(356, 379);
             this.Controls.Add(this.dgvDetail);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "Details";
             this.Text = "DetailsForm";
             this.Load += new System.EventHandler(this.Details_Load);

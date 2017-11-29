@@ -11,7 +11,7 @@ namespace Greenheck_Project.Database
     class DataRetrievalClass
     {
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sab_5\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck2-master (1)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -212,6 +212,19 @@ namespace Greenheck_Project.Database
 
 #endregion
 
+        public static string GetProjectName(int id)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT Name FROM ProjectTable WHERE ProjectID = @param1";
+            fetch.Parameters.AddWithValue("@param1", id);
+
+            string result = fetch.ExecuteScalar().ToString();
+
+            return result;
+        }
+
         //Fetches and returns the number of projects that share a specified status.
         public static int GetStatus(int num)
         {
@@ -352,12 +365,41 @@ namespace Greenheck_Project.Database
                 comment.FiscalYear = Int32.Parse(list["FiscalYear"].ToString());
                 comment.Quarter = Int32.Parse(list["Quarter"].ToString());
                 comment.ProjectID = Int32.Parse(list["ProjectID"].ToString());
-                comment.FocusID = Int32.Parse(list["StatusID"].ToString());
+                comment.FocusID = list["FocusID"].ToString();
                 comment.Comments = list["Comments"].ToString();
 
                 comments.Add(comment);
             }
 
+            fetch.Connection.Close();
+
+            return comments;
+        }
+
+        public static List<FocusComments> GetDetails(int year, int quarter, int status)
+        {
+            List<FocusComments> comments = new List<FocusComments>();
+
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT * FROM FocusCommentsTable WHERE FiscalYear = @param1 AND Quarter = @param2 AND StatusID = @param3";
+
+            fetch.Parameters.AddWithValue("@param1", year);
+            fetch.Parameters.AddWithValue("@param2", quarter);
+            fetch.Parameters.AddWithValue("@param3", status);
+
+            SqlDataReader list = fetch.ExecuteReader();
+
+            while (list.Read())
+            {
+                FocusComments comment = new FocusComments();
+                comment.ProjectID = Int32.Parse(list["ProjectID"].ToString());
+                comment.FocusID = list["FocusID"].ToString();
+                comment.Comments = list["Comments"].ToString();
+
+                comments.Add(comment);
+            }
             fetch.Connection.Close();
 
             return comments;
