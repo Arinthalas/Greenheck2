@@ -21,8 +21,10 @@ namespace Greenheck_Project
         }
 
 
-
         List<FocusComments> focusList = new List<FocusComments>();
+        FocusComments editCommentObject = new FocusComments();
+
+        internal FocusComments EditCommentObject { get => editCommentObject; set => editCommentObject = value; }
 
         //Populates the overview table with values
         private void Form1_Load(object sender, EventArgs e)
@@ -159,6 +161,7 @@ namespace Greenheck_Project
                 {
                     cbFocusQuarter.Items.Add(comment.Quarter);
                 }
+
             }
         }
 
@@ -228,7 +231,7 @@ namespace Greenheck_Project
                 Details next = new Details(Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString()),
                     Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString()), dgvOverview.CurrentCell.ColumnIndex - 2);
 
-                next.passedInfo = dgvOverview.CurrentCell.ColumnIndex -2;
+                next.passedInfo = dgvOverview.CurrentCell.ColumnIndex -1;
                 next.passedYear = Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString());
                 next.passedQuarter = Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString());
 
@@ -285,6 +288,11 @@ namespace Greenheck_Project
                 }
                 dgvOverview.Rows.Add(selectedYear, i, notStarted, inProgress, complete, delayed, cancelled);
             }
+        }
+
+        public void GrabItem(FocusComments item)
+        {
+
         }
     }
 }

@@ -16,7 +16,8 @@ namespace Greenheck_Project
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Form1 origin = new Form1();
+            Application.Run(origin);
         }
     }
 }

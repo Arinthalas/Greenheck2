@@ -47,5 +47,18 @@ namespace Greenheck_Project.UI
                 dgvDetail.Rows.Add(DataRetrievalClass.GetProjectName(c.ProjectID), c.StatusID, c.Comments);
             }
         }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void btnCopy_Click(object sender, EventArgs e)
+        {
+            FocusComments edit = DataRetrievalClass.GetComment(passedYear, passedQuarter, DataRetrievalClass.GetProjectIDbyName(dgvDetail.CurrentRow.Cells[0].Value.ToString()));
+            ActiveForm.Name = "origin";
+
+            
+        }
     }
 }
