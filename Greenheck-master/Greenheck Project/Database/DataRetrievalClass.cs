@@ -217,12 +217,25 @@ namespace Greenheck_Project.Database
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
 
-            fetch.CommandText = "SELECT Name FROM ProjectTable WHERE ProjectID = @param1";
+            fetch.CommandText = "SELECT ProjectName FROM ProjectTable WHERE ProjectID = @param1";
             fetch.Parameters.AddWithValue("@param1", id);
 
             string result = fetch.ExecuteScalar().ToString();
 
             return result;
+        }
+
+        public static int GetProjectIDbyName(string name)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT ProjectID FROM ProjectTable WHERE ProjectName = @param1";
+            fetch.Parameters.AddWithValue("@param1", name);
+
+            int id = Int32.Parse(fetch.ExecuteScalar().ToString());
+
+            return id;
         }
 
         //Fetches and returns the number of projects that share a specified status.
@@ -374,6 +387,33 @@ namespace Greenheck_Project.Database
             fetch.Connection.Close();
 
             return comments;
+        }
+
+        public static FocusComments GetComment(int year, int quarter, int projID)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT * FROM FocusCommentsTable WHERE FiscalYear = @param1 AND Quarter = @param2 AND ProjectID = @param3";
+            fetch.Parameters.AddWithValue("@param1", year);
+            fetch.Parameters.AddWithValue("@param2", quarter);
+            fetch.Parameters.AddWithValue("@param3", projID);
+
+            SqlDataReader item = fetch.ExecuteReader();
+
+            FocusComments comment = new FocusComments();
+
+            while (item.Read())
+            {
+                comment.FiscalYear = Int32.Parse(item["FiscalYear"].ToString());
+                comment.Quarter = Int32.Parse(item["Quarter"].ToString());
+                comment.ProjectID = Int32.Parse(item["ProjectID"].ToString());
+                comment.FocusID = item["FocusID"].ToString();
+                comment.StatusID = Int32.Parse(item["StatusID"].ToString());
+                comment.Comments = item["Comments"].ToString();
+            }
+
+            return comment;
         }
 
         public static List<FocusComments> GetDetails(int year, int quarter, int status)
