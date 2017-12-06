@@ -8,14 +8,14 @@ namespace Greenheck_Project.Problem_Domain
 {
     class Teams
     {
-        public int id;
-        public string name;
+        public int TeamID;
+        public string TeamName;
 
         //Creates a team with passed values
         public Teams(int ident, string who)
         {
-            id = ident;
-            name = who;
+            TeamID = ident;
+            TeamName = who;
         }
 
         //Creates an empty Team object

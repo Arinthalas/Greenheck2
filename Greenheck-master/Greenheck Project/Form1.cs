@@ -22,6 +22,7 @@ namespace Greenheck_Project
 
 
         List<FocusComments> focusList = new List<FocusComments>();
+        List<Project> project = new List<Project>();
         FocusComments editCommentObject = new FocusComments();
 
         internal FocusComments EditCommentObject { get => editCommentObject; set => editCommentObject = value; }
@@ -113,12 +114,37 @@ namespace Greenheck_Project
                 cbDeptID.Items.Add(d.DeptID);
             }
 
+            //clears contents from status drop-down then refills, preventing multiple instances
+            //of a single entity.
+            cbStatus.Items.Clear();
+            List<Status> status = Database.DataRetrievalClass.GetStatus();
+            foreach (Status s in status)
+            {
+                cbStatus.Items.Add(s.StatusID);
+            }
+
+            cbDelProject.Items.Clear();
+            List<Project> projects = Database.DataRetrievalClass.GetProjects();
+            foreach (Project p in projects)
+            {
+                cbDelProject.Items.Add(p.ProjectName);
+            }
+
+            //clears contents from teamID drop-down then refills, preventing multiple instances
+            //of a single entity.
+            cbTeamID.Items.Clear();
+            List<Teams> team = Database.DataRetrievalClass.GetTeams();
+            foreach (Teams t in team)
+            {
+                cbTeamID.Items.Add(t.TeamID);
+            }
+
             //same process as above, but for the team drop-down.
             cbTeams.Items.Clear();
             List<Teams> them = Database.DataRetrievalClass.GetTeams();
             foreach (Teams t in them)
             {
-                cbTeams.Items.Add(t.name);
+                cbTeams.Items.Add(t.TeamName);
             }
 
             cbQuarter.Items.Clear();
@@ -127,7 +153,7 @@ namespace Greenheck_Project
             cbDelTeam.Items.Clear();
             foreach (Teams t in them)
             {
-                cbDelTeam.Items.Add(t.name);
+                cbDelTeam.Items.Add(t.TeamName);
             }
 
             cbFocusYear.Items.Clear();
@@ -136,16 +162,14 @@ namespace Greenheck_Project
             cbFocus.Items.Clear();
             txtFocusComments.Clear();
 
-           
-
             focusList = DataRetrievalClass.GetComments();
 
             if (!cbFocusYear.Items.Contains(DateTime.Now.Year))
             {
                 cbFocusYear.Items.Add(DateTime.Now.Year);
             }
-            
-            foreach(FocusComments comment in focusList)
+
+            foreach (FocusComments comment in focusList)
             {
                 if (!cbFocusYear.Items.Contains(comment.FiscalYear))
                 {
@@ -162,6 +186,10 @@ namespace Greenheck_Project
                     cbFocusQuarter.Items.Add(comment.Quarter);
                 }
 
+                if (!cbFocus.Items.Contains(comment.FocusID))
+                {
+                    cbFocus.Items.Add(comment.FocusID);
+                }
             }
         }
 
@@ -176,7 +204,7 @@ namespace Greenheck_Project
             List<Teams> them = Database.DataRetrievalClass.GetTeams(current.DeptID);
             foreach (Teams t in them)
             {
-                cbTeams.Items.Add(t.name);
+                cbTeams.Items.Add(t.TeamName);
             }
         }
 
@@ -185,8 +213,8 @@ namespace Greenheck_Project
         {
             //Create a new Team object from data provided in the text and combo boxes
             Teams here = new Teams();
-            here.id= DataRetrievalClass.GenerateTeamID() +1;
-            here.name = txtTeamName.Text;
+            here.TeamID= DataRetrievalClass.GenerateTeamID() +1;
+            here.TeamName = txtTeamName.Text;
             
             //Check to see if a team with the same name or id exists. If so, display message and prevent creation.
             if (Database.DataRetrievalClass.TeamExists(txtTeamName.Text))
@@ -196,7 +224,7 @@ namespace Greenheck_Project
             else
             {
                 int dep = Int32.Parse(cbDeptID.SelectedItem.ToString());
-                DataRetrievalClass.CreateTeam(here.id, here.name, dep);
+                DataRetrievalClass.CreateTeam(here.TeamID, here.TeamName, dep);
                 MessageBox.Show( txtTeamName.Text + " successfully created.");
                 cbDeptID.Refresh();
                 txtTeamName.Clear();
@@ -206,20 +234,90 @@ namespace Greenheck_Project
         //Deletes a team from the database. Currently does not deal with foreign key constraint entries.
         private void btnDelTeam_Click(object sender, EventArgs e)
         {
+
+            string message = "Are you sure you want to delete " + cbDelTeam.SelectedItem.ToString() + "?";
+            string caption = "Team Deletion";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+
             //Retrieve the ID of a team from the database by searching for the selected name in the drop-down.
             int teamID = DataRetrievalClass.GetTeamByName(cbDelTeam.SelectedItem.ToString());
             string name = cbDelTeam.SelectedItem.ToString();
             cbDelTeam.Items.Remove(cbDelTeam.SelectedItem.ToString());
-            //Deletes team from database and shows a confirmation message.
-            DataRetrievalClass.DeleteTeam(teamID);
-            MessageBox.Show(name + " has been terminated.");
+
+            result = MessageBox.Show(message, caption, buttons);
+
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                //Deletes project from database and shows a confirmation message.
+                DataRetrievalClass.DeleteTeam(teamID);
+                MessageBox.Show(name + " has been deleted.");
+            }
 
             //Repopulates the drop-down list after removal.
             cbDelTeam.Items.Clear();
             List<Teams> them = Database.DataRetrievalClass.GetTeams();
             foreach (Teams t in them)
             {
-                cbDelTeam.Items.Add(t.name);
+                cbDelTeam.Items.Add(t.TeamName);
+            }
+        }
+
+        private void btnCreateProject_Click(object sender, EventArgs e)
+        {
+            //Create a new Project object from data provided in the text and combo boxes
+            Project project = new Project();
+            project.ProjectID = DataRetrievalClass.GenerateProjectID() + 1;
+            project.ProjectName = txtProjectName.Text;
+            project.TeamID = Convert.ToInt32(cbTeamID.SelectedItem);
+            project.Status = Convert.ToInt32(cbStatus.SelectedItem);
+
+            //Check to see if a Project with the same name exists. If so, display message and prevent creation.
+            if (Database.DataRetrievalClass.ProjectExists(txtProjectName.Text))
+            {
+                MessageBox.Show("The name of this project already exists, please choose another.");
+            }
+            else
+            {
+                //int dep = Int32.Parse(cbDeptID.SelectedItem.ToString());
+                DataRetrievalClass.CreateProject(project.ProjectID, project.ProjectName, project.Status, project.TeamID);
+                MessageBox.Show(txtProjectName.Text + " successfully created.");
+
+                txtProjectName.Clear();
+            }
+        }
+
+        private void btnDelProject_Click(object sender, EventArgs e)
+        {
+
+            string message = "Are you sure you want to delete " + cbDelProject.SelectedItem.ToString() + "?";
+            string caption = "Project Deletion";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+
+            //Retrieve the ID of a project from the database by searching for the selected name in the drop-down.
+            int projectID = DataRetrievalClass.GetProjectIDbyName(cbDelProject.SelectedItem.ToString());
+            string name = cbDelProject.SelectedItem.ToString();
+            cbDelProject.Items.Remove(cbDelProject.SelectedItem.ToString());
+
+            result = MessageBox.Show(message, caption, buttons);
+
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                //Deletes project from database and shows a confirmation message.
+                DataRetrievalClass.DeleteProject(projectID);
+                MessageBox.Show(name + " has been deleted.");
+            }
+
+            //Repopulates the drop-down list after removal.
+            cbDelProject.Items.Clear();
+            cbTeamID.Refresh();
+            cbStatus.Refresh();
+
+            List<Project> projects = Database.DataRetrievalClass.GetProjects();
+            foreach (Project p in projects)
+            {
+                cbDelProject.Items.Add(p.ProjectName);
             }
         }
 
@@ -290,9 +388,9 @@ namespace Greenheck_Project
             }
         }
 
-        public void GrabItem(FocusComments item)
-        {
+        //public void GrabItem(FocusComments item)
+        //{
 
-        }
+        //}
     }
 }

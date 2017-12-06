@@ -71,6 +71,7 @@
     <Compile Include="Problem Domain\FocusComments.cs" />
     <Compile Include="Problem Domain\Project.cs" />
     <Compile Include="Problem Domain\Quarter.cs" />
+    <Compile Include="Problem Domain\Status.cs" />
     <Compile Include="Problem Domain\Teams.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

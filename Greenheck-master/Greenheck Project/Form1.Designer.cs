@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabOverview = new System.Windows.Forms.TabControl();
             this.tabPageOverview = new System.Windows.Forms.TabPage();
@@ -52,6 +52,15 @@
             this.lblTeam = new System.Windows.Forms.Label();
             this.cbTeams = new System.Windows.Forms.ComboBox();
             this.tabPageTeam = new System.Windows.Forms.TabPage();
+            this.btnDelProject = new System.Windows.Forms.Button();
+            this.cbDelProject = new System.Windows.Forms.ComboBox();
+            this.btnCreateProject = new System.Windows.Forms.Button();
+            this.cbTeamID = new System.Windows.Forms.ComboBox();
+            this.cbStatus = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.txtProjectName = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.cbDeptID = new System.Windows.Forms.ComboBox();
             this.cbDelTeam = new System.Windows.Forms.ComboBox();
             this.lblDeptID = new System.Windows.Forms.Label();
@@ -145,14 +154,14 @@
             this.dgvOverview.AllowUserToDeleteRows = false;
             this.dgvOverview.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgvOverview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgvOverview.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvOverview.ColumnHeadersHeight = 28;
             this.dgvOverview.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.clmYear,
@@ -162,14 +171,14 @@
             this.clmDone,
             this.clmHiatus,
             this.clmCancelled});
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvOverview.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvOverview.DefaultCellStyle = dataGridViewCellStyle2;
             this.dgvOverview.Location = new System.Drawing.Point(3, 145);
             this.dgvOverview.MultiSelect = false;
             this.dgvOverview.Name = "dgvOverview";
@@ -290,6 +299,15 @@
             // 
             // tabPageTeam
             // 
+            this.tabPageTeam.Controls.Add(this.btnDelProject);
+            this.tabPageTeam.Controls.Add(this.cbDelProject);
+            this.tabPageTeam.Controls.Add(this.btnCreateProject);
+            this.tabPageTeam.Controls.Add(this.cbTeamID);
+            this.tabPageTeam.Controls.Add(this.cbStatus);
+            this.tabPageTeam.Controls.Add(this.label4);
+            this.tabPageTeam.Controls.Add(this.label5);
+            this.tabPageTeam.Controls.Add(this.txtProjectName);
+            this.tabPageTeam.Controls.Add(this.label2);
             this.tabPageTeam.Controls.Add(this.cbDeptID);
             this.tabPageTeam.Controls.Add(this.cbDelTeam);
             this.tabPageTeam.Controls.Add(this.lblDeptID);
@@ -300,15 +318,93 @@
             this.tabPageTeam.Location = new System.Drawing.Point(4, 29);
             this.tabPageTeam.Name = "tabPageTeam";
             this.tabPageTeam.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTeam.Size = new System.Drawing.Size(739, 368);
+            this.tabPageTeam.Size = new System.Drawing.Size(924, 368);
             this.tabPageTeam.TabIndex = 2;
             this.tabPageTeam.Text = "Teams";
             this.tabPageTeam.UseVisualStyleBackColor = true;
             // 
+            // btnDelProject
+            // 
+            this.btnDelProject.Location = new System.Drawing.Point(683, 297);
+            this.btnDelProject.Name = "btnDelProject";
+            this.btnDelProject.Size = new System.Drawing.Size(99, 29);
+            this.btnDelProject.TabIndex = 18;
+            this.btnDelProject.Text = "Remove Team";
+            this.btnDelProject.UseVisualStyleBackColor = true;
+            this.btnDelProject.Click += new System.EventHandler(this.btnDelProject_Click);
+            // 
+            // cbDelProject
+            // 
+            this.cbDelProject.FormattingEnabled = true;
+            this.cbDelProject.Location = new System.Drawing.Point(672, 235);
+            this.cbDelProject.Name = "cbDelProject";
+            this.cbDelProject.Size = new System.Drawing.Size(121, 28);
+            this.cbDelProject.TabIndex = 17;
+            // 
+            // btnCreateProject
+            // 
+            this.btnCreateProject.Location = new System.Drawing.Point(685, 165);
+            this.btnCreateProject.Name = "btnCreateProject";
+            this.btnCreateProject.Size = new System.Drawing.Size(99, 28);
+            this.btnCreateProject.TabIndex = 16;
+            this.btnCreateProject.Text = "Add Project";
+            this.btnCreateProject.UseVisualStyleBackColor = true;
+            this.btnCreateProject.Click += new System.EventHandler(this.btnCreateProject_Click);
+            // 
+            // cbTeamID
+            // 
+            this.cbTeamID.FormattingEnabled = true;
+            this.cbTeamID.Location = new System.Drawing.Point(684, 67);
+            this.cbTeamID.Name = "cbTeamID";
+            this.cbTeamID.Size = new System.Drawing.Size(100, 28);
+            this.cbTeamID.TabIndex = 15;
+            // 
+            // cbStatus
+            // 
+            this.cbStatus.FormattingEnabled = true;
+            this.cbStatus.Location = new System.Drawing.Point(683, 114);
+            this.cbStatus.Name = "cbStatus";
+            this.cbStatus.Size = new System.Drawing.Size(100, 28);
+            this.cbStatus.TabIndex = 13;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(558, 117);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(60, 20);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Status:";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(558, 70);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(74, 20);
+            this.label5.TabIndex = 11;
+            this.label5.Text = "Team ID:";
+            // 
+            // txtProjectName
+            // 
+            this.txtProjectName.Location = new System.Drawing.Point(683, 19);
+            this.txtProjectName.Name = "txtProjectName";
+            this.txtProjectName.Size = new System.Drawing.Size(100, 26);
+            this.txtProjectName.TabIndex = 8;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(558, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(108, 20);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Project Name:";
+            // 
             // cbDeptID
             // 
             this.cbDeptID.FormattingEnabled = true;
-            this.cbDeptID.Location = new System.Drawing.Point(156, 115);
+            this.cbDeptID.Location = new System.Drawing.Point(156, 72);
             this.cbDeptID.Name = "cbDeptID";
             this.cbDeptID.Size = new System.Drawing.Size(100, 28);
             this.cbDeptID.TabIndex = 3;
@@ -316,7 +412,7 @@
             // cbDelTeam
             // 
             this.cbDelTeam.FormattingEnabled = true;
-            this.cbDelTeam.Location = new System.Drawing.Point(385, 67);
+            this.cbDelTeam.Location = new System.Drawing.Point(147, 235);
             this.cbDelTeam.Name = "cbDelTeam";
             this.cbDelTeam.Size = new System.Drawing.Size(121, 28);
             this.cbDelTeam.TabIndex = 5;
@@ -324,7 +420,7 @@
             // lblDeptID
             // 
             this.lblDeptID.AutoSize = true;
-            this.lblDeptID.Location = new System.Drawing.Point(31, 118);
+            this.lblDeptID.Location = new System.Drawing.Point(31, 75);
             this.lblDeptID.Name = "lblDeptID";
             this.lblDeptID.Size = new System.Drawing.Size(119, 20);
             this.lblDeptID.TabIndex = 6;
@@ -332,7 +428,7 @@
             // 
             // btnDelTeam
             // 
-            this.btnDelTeam.Location = new System.Drawing.Point(396, 118);
+            this.btnDelTeam.Location = new System.Drawing.Point(157, 297);
             this.btnDelTeam.Name = "btnDelTeam";
             this.btnDelTeam.Size = new System.Drawing.Size(99, 29);
             this.btnDelTeam.TabIndex = 6;
@@ -342,7 +438,7 @@
             // 
             // btnCreateTeam
             // 
-            this.btnCreateTeam.Location = new System.Drawing.Point(94, 184);
+            this.btnCreateTeam.Location = new System.Drawing.Point(157, 128);
             this.btnCreateTeam.Name = "btnCreateTeam";
             this.btnCreateTeam.Size = new System.Drawing.Size(99, 28);
             this.btnCreateTeam.TabIndex = 4;
@@ -390,7 +486,7 @@
             // lblFocus
             // 
             this.lblFocus.AutoSize = true;
-            this.lblFocus.Location = new System.Drawing.Point(320, 59);
+            this.lblFocus.Location = new System.Drawing.Point(475, 62);
             this.lblFocus.Name = "lblFocus";
             this.lblFocus.Size = new System.Drawing.Size(57, 20);
             this.lblFocus.TabIndex = 10;
@@ -399,14 +495,14 @@
             // cbFocus
             // 
             this.cbFocus.FormattingEnabled = true;
-            this.cbFocus.Location = new System.Drawing.Point(388, 56);
+            this.cbFocus.Location = new System.Drawing.Point(543, 59);
             this.cbFocus.Name = "cbFocus";
             this.cbFocus.Size = new System.Drawing.Size(121, 28);
             this.cbFocus.TabIndex = 4;
             // 
             // btnCommAdd
             // 
-            this.btnCommAdd.Location = new System.Drawing.Point(564, 324);
+            this.btnCommAdd.Location = new System.Drawing.Point(785, 331);
             this.btnCommAdd.Name = "btnCommAdd";
             this.btnCommAdd.Size = new System.Drawing.Size(113, 29);
             this.btnCommAdd.TabIndex = 6;
@@ -418,13 +514,13 @@
             this.txtFocusComments.Location = new System.Drawing.Point(22, 127);
             this.txtFocusComments.Multiline = true;
             this.txtFocusComments.Name = "txtFocusComments";
-            this.txtFocusComments.Size = new System.Drawing.Size(655, 182);
+            this.txtFocusComments.Size = new System.Drawing.Size(876, 182);
             this.txtFocusComments.TabIndex = 5;
             // 
             // cbFocusProject
             // 
             this.cbFocusProject.FormattingEnabled = true;
-            this.cbFocusProject.Location = new System.Drawing.Point(388, 15);
+            this.cbFocusProject.Location = new System.Drawing.Point(543, 18);
             this.cbFocusProject.Name = "cbFocusProject";
             this.cbFocusProject.Size = new System.Drawing.Size(121, 28);
             this.cbFocusProject.TabIndex = 3;
@@ -458,7 +554,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(320, 18);
+            this.label3.Location = new System.Drawing.Point(475, 21);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(62, 20);
             this.label3.TabIndex = 2;
@@ -567,6 +663,15 @@
         private System.Windows.Forms.Button btnFilter;
         protected System.Windows.Forms.ComboBox cbFocus;
         public System.Windows.Forms.ComboBox cbFocusYear;
+        private System.Windows.Forms.Button btnCreateProject;
+        private System.Windows.Forms.ComboBox cbTeamID;
+        private System.Windows.Forms.ComboBox cbStatus;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox txtProjectName;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnDelProject;
+        private System.Windows.Forms.ComboBox cbDelProject;
     }
 }
 

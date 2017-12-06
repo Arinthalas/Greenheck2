@@ -10,8 +10,10 @@ namespace Greenheck_Project.Database
 {
     class DataRetrievalClass
     {
+        #region Connection String
+        
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck2-master (1)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\tleac021\Downloads\Greenheck2-master (4)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -20,6 +22,8 @@ namespace Greenheck_Project.Database
             thing.Open();
             return thing;
         }
+
+        #endregion
 
         #region Team Methods
         //Fetches all the teams from the database and returns them in a list.
@@ -40,11 +44,13 @@ namespace Greenheck_Project.Database
             while (lists.Read())
             {
                 Teams me = new Teams();
-                me.id = Convert.ToInt32(lists["TeamID"]);
-                me.name = lists["TeamName"].ToString();
+                me.TeamID = Convert.ToInt32(lists["TeamID"]);
+                me.TeamName = lists["TeamName"].ToString();
                 them.Add(me);
             }
+
             fetch.Connection.Close();
+
             return them;
         }
 
@@ -60,18 +66,18 @@ namespace Greenheck_Project.Database
             fetch.CommandText = "SELECT TeamName, TeamID FROM TeamTable WHERE DeptID = @param1";
             fetch.Parameters.AddWithValue("@param1", depID);
 
-
             SqlDataReader lists = fetch.ExecuteReader();
-
 
             while (lists.Read())
             {
                 Teams me = new Teams();
-                me.id = Convert.ToInt32(lists["TeamID"]);
-                me.name = lists["TeamName"].ToString();
+                me.TeamID = Convert.ToInt32(lists["TeamID"]);
+                me.TeamName = lists["TeamName"].ToString();
                 them.Add(me);
             }
+
             fetch.Connection.Close();
+
             return them;
         }
 
@@ -111,7 +117,7 @@ namespace Greenheck_Project.Database
 
             foreach(Teams t in test)
             {
-                if(t.name == name)
+                if(t.TeamName == name)
                 {
                     exist = true;
                 }
@@ -210,7 +216,38 @@ namespace Greenheck_Project.Database
             return them[0].DeptID;
         }
 
-#endregion
+        #endregion
+
+        #region Project Methods
+
+        public static List<Project> GetProjects()
+        {
+            //List to be returned
+            List<Project> projects = new List<Project>();
+
+            //Defines SQL command
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+            fetch.CommandText = "Select * FROM ProjectTable";
+
+            SqlDataReader lists = fetch.ExecuteReader();
+
+            //Creates project objects, adds data to them and adds the object to the list while data
+            //can still be retrieved from the database
+            while (lists.Read())
+            {
+                Project project = new Project();
+                project.ProjectID = Convert.ToInt32(lists["ProjectID"]);
+                project.ProjectName = lists["ProjectName"].ToString();
+                project.Status = Convert.ToInt32(lists["CurrentStatus"]);
+                project.TeamID = Convert.ToInt32(lists["TeamID"]);
+                projects.Add(project);
+            }
+
+            fetch.Connection.Close();
+
+            return projects;
+        }
 
         public static string GetProjectName(int id)
         {
@@ -225,34 +262,91 @@ namespace Greenheck_Project.Database
             return result;
         }
 
+        //Fetches the ID of a specified project.
         public static int GetProjectIDbyName(string name)
         {
+            List<Project> projects = new List<Project>();
+
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
-
             fetch.CommandText = "SELECT ProjectID FROM ProjectTable WHERE ProjectName = @param1";
             fetch.Parameters.AddWithValue("@param1", name);
 
-            int id = Int32.Parse(fetch.ExecuteScalar().ToString());
+            SqlDataReader list = fetch.ExecuteReader();
 
-            return id;
+            while (list.Read())
+            {
+                Project project = new Project();
+                project.ProjectID = Convert.ToInt32(list["ProjectID"]);
+                projects.Add(project);
+            }
+            fetch.Connection.Close();
+
+            return projects[0].ProjectID;
         }
 
-        //Fetches and returns the number of projects that share a specified status.
-        public static int GetStatus(int num)
+        //Logic test to determine wether a project name or id already exists in the database
+        public static bool ProjectExists(string name)
+        {
+            List<Project> test = GetProjects();
+            bool exist = false;
+
+            foreach (Project p in test)
+            {
+                if (p.ProjectName == name)
+                {
+                    exist = true;
+                }
+            }
+
+            return exist;
+        }
+
+        //Adds a new row to the ProjectTable in the database based on data passed in through text boxes and combo boxes
+        public static void CreateProject(int pid, string pname, int status, int tid)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+            put.CommandText = "INSERT INTO ProjectTable VALUES(@param1, @param2, @param3, @param4)";
+            put.Parameters.AddWithValue("@param1", pid);
+            put.Parameters.AddWithValue("@param2", pname);
+            put.Parameters.AddWithValue("@param3", status);
+            put.Parameters.AddWithValue("@param4", tid);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
+        //Deletes a project from the database based on a passed ID.
+        public static void DeleteProject(int id)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "DELETE FROM ProjectTable WHERE ProjectID = @param1";
+            rem.Parameters.Add(new SqlParameter("@param1", id));
+
+            rem.ExecuteNonQuery();
+
+            rem.CommandText = "DELETE FROM ProjectFocusBridge WHERE ProjectID = @param1";
+
+            rem.Connection.Close();
+        }
+
+        public static int GenerateProjectID()
         {
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
 
-            fetch.CommandText = "SELECT COUNT(ProjectID) FROM ProjectTable WHERE CurrentStatus = @param1";
-            fetch.Parameters.AddWithValue("@param1", num);
+            fetch.CommandText = "SELECT MAX(ProjectID) FROM ProjectTable";
 
-            int x = Convert.ToInt32(fetch.ExecuteScalar());
-
-            fetch.Connection.Close();
-
-            return x;
+            return Int32.Parse(fetch.ExecuteScalar().ToString());
         }
+
+        #endregion
+
+        #region Quarter Methods
 
         //Fetches data from previous quarters and returns it as a list.
         public static List<Quarter> GetQuarter()
@@ -305,6 +399,65 @@ namespace Greenheck_Project.Database
             return quarterList;
         }
 
+        #endregion
+
+        #region Status Methods
+
+        public static List<Status> GetStatus()
+        {
+            //List to be returned
+            List<Status> statuses = new List<Status>();
+
+            //Defines SQL command
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+            fetch.CommandText = "Select * FROM StatusTable";
+
+            SqlDataReader lists = fetch.ExecuteReader();
+
+            //Creates team objects, adds data to them and adds the object to the list while data
+            //can still be retrieved from the database
+            while (lists.Read())
+            {
+                Status status = new Status();
+                status.StatusID = Convert.ToInt32(lists["StatusId"]);
+                status.StatusName = lists["StatusName"].ToString();
+
+                statuses.Add(status);
+            }
+            fetch.Connection.Close();
+            return statuses;
+        }
+
+        public static void CreateStatus(int id, string name)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+            put.CommandText = "INSERT INTO StatusTable VALUES(@param1, @param2)";
+            put.Parameters.AddWithValue("@param1", id);
+            put.Parameters.AddWithValue("@param2", name);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
+        //Fetches and returns the number of projects that share a specified status.
+        public static int GetStatus(int num)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT COUNT(ProjectID) FROM ProjectTable WHERE CurrentStatus = @param1";
+            fetch.Parameters.AddWithValue("@param1", num);
+
+            int x = Convert.ToInt32(fetch.ExecuteScalar());
+
+            fetch.Connection.Close();
+
+            return x;
+        }
+
         //Counts the number of unique statuses from the StatusTable
         public static int CountStatus()
         {
@@ -319,6 +472,8 @@ namespace Greenheck_Project.Database
 
             return x;
         }
+
+        #endregion
 
         //public static List<T> GetDetailedStatus()
         //{
@@ -440,6 +595,7 @@ namespace Greenheck_Project.Database
 
                 comments.Add(comment);
             }
+
             fetch.Connection.Close();
 
             return comments;
