@@ -13,7 +13,7 @@ namespace Greenheck_Project.Database
         #region Connection String
         
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\tleac021\Downloads\Greenheck2-master (4)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Tyler\Downloads\Greenheck2-master (2)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -152,7 +152,7 @@ namespace Greenheck_Project.Database
 
             rem.ExecuteNonQuery();
 
-            rem.CommandText = "DELETE FROM DeptTeamBridge WHERE TeamID = @param1";
+            rem.CommandText = "DELETE FROM DeptartmentTeamBridge WHERE TeamID = @param1";
 
             rem.Connection.Close();
         }
@@ -171,7 +171,7 @@ namespace Greenheck_Project.Database
 
         #region Department Methods
         //Fetches Department data from the database and returns it in a list
-        public static List<Department> GetDept()
+        public static List<Department> GetDeptartment()
         {
             List<Department> them = new List<Department>();
 
@@ -183,11 +183,14 @@ namespace Greenheck_Project.Database
 
             while (list.Read())
             {
-                Department us = new Department();
-                us.DeptID = Convert.ToInt32(list["DepartmentID"]);
-                us.DeptName = list["DepartmentName"].ToString();
-                them.Add(us);
+                Department department = new Department();
+                department.DeptID = Convert.ToInt32(list["DepartmentID"]);
+                department.DeptName = list["DepartmentName"].ToString();
+                department.DeptHead = list["DepartmentHead"].ToString();
+
+                them.Add(department);
             }
+
             fetch.Connection.Close();
 
             return them;
@@ -214,6 +217,76 @@ namespace Greenheck_Project.Database
             fetch.Connection.Close();
 
             return them[0].DeptID;
+        }
+
+        public static string GetDepartmentByID(int id)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT DepartmentName FROM DepartmentTable WHERE DepartmentID = @param1";
+            fetch.Parameters.AddWithValue("@param1", id);
+
+            string name = fetch.ExecuteScalar().ToString();
+            return name;
+        }
+
+        //Logic test to determine wether a department name or id already exists in the database
+        public static bool DepartmentExists(string name)
+        {
+            List<Department> test = GetDeptartment();
+            bool exist = false;
+
+            foreach (Department d in test)
+            {
+                if (d.DeptName == name)
+                {
+                    exist = true;
+                }
+            }
+
+            return exist;
+        }
+
+        //Adds a new row to the DepartmentTable in the database based on data passed in through text boxes
+        public static void CreateDepartment(int id, string name, string head)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+            put.CommandText = "INSERT INTO DepartmentTable VALUES(@param1, @param2, @param3)";
+            put.Parameters.AddWithValue("@param1", id);
+            put.Parameters.AddWithValue("@param2", name);
+            put.Parameters.AddWithValue("@param3", head);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
+        //Deletes a department from the databased based on a passed ID.
+        public static void DeleteDepartment(int id)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "DELETE FROM DepartmentTable WHERE DepartmentID = @param1";
+            rem.Parameters.Add(new SqlParameter("@param1", id));
+
+            rem.ExecuteNonQuery();
+
+            rem.CommandText = "DELETE FROM DeptartmentTeamBridge WHERE DepartmentID = @param1";
+
+            rem.Connection.Close();
+        }
+
+        public static int GenerateDepartmentID()
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT MAX(DepartmentID) FROM DepartmentTable";
+
+            return Int32.Parse(fetch.ExecuteScalar().ToString());
         }
 
         #endregion
@@ -569,6 +642,23 @@ namespace Greenheck_Project.Database
             }
 
             return comment;
+        }
+
+        //Adds a new row to the FocusCommentsTable in the database based on data passed in through text boxes and combo boxes
+        public static void CreateComments(int fiscalyear, int quarter, int pid, int sid, string comments)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+            put.CommandText = "INSERT INTO FocusCommentsTable VALUES(@param1, @param2, @param3, @param4, @param5)";
+            put.Parameters.AddWithValue("@param1", fiscalyear);
+            put.Parameters.AddWithValue("@param2", quarter);
+            put.Parameters.AddWithValue("@param3", pid);
+            put.Parameters.AddWithValue("@param4", sid);
+            put.Parameters.AddWithValue("@param5", comments);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
         }
 
         public static List<FocusComments> GetDetails(int year, int quarter, int status)
