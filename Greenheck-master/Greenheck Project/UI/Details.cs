@@ -18,6 +18,7 @@ namespace Greenheck_Project.UI
         public int passedInfo;
         public int passedYear;
         public int passedQuarter;
+        FocusComments editComment;
 
 
         public Details()
@@ -38,6 +39,20 @@ namespace Greenheck_Project.UI
 
         }
 
+        public Details(FocusComments editObject)
+        {
+            InitializeComponent();
+            editComment = editObject;
+            List<FocusComments> list = DataRetrievalClass.GetDetails(editObject.FiscalYear, editObject.Quarter, editObject.StatusID);
+
+            foreach (FocusComments c in list)
+            {
+                dgvDetail.Rows.Add(DataRetrievalClass.GetProjectName(c.ProjectID), c.StatusID, c.Comments);
+            }
+
+
+        }
+
     private void Details_Load(object sender, EventArgs e)
         {
             List<FocusComments> list = DataRetrievalClass.GetDetails(passedYear, passedQuarter, passedInfo);
@@ -55,10 +70,9 @@ namespace Greenheck_Project.UI
 
         private void btnCopy_Click(object sender, EventArgs e)
         {
-            FocusComments edit = DataRetrievalClass.GetComment(passedYear, passedQuarter, DataRetrievalClass.GetProjectIDbyName(dgvDetail.CurrentRow.Cells[0].Value.ToString()));
-            ActiveForm.Name = "origin";
-
-            
+            editComment.ProjectID = DataRetrievalClass.GetProjectIDbyName(dgvDetail.CurrentRow.Cells[0].Value.ToString());
+            editComment.FocusID = dgvDetail.CurrentRow.Cells[1].Value.ToString();
+            editComment.Comments = dgvDetail.CurrentRow.Cells[2].Value.ToString();
         }
     }
 }
