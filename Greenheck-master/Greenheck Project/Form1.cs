@@ -20,7 +20,7 @@ namespace Greenheck_Project
             InitializeComponent();
         }
 
-
+        string s = "";
         List<FocusComments> focusList = new List<FocusComments>();
         List<Project> project = new List<Project>();
         FocusComments editCommentObject = new FocusComments();
@@ -43,7 +43,7 @@ namespace Greenheck_Project
                 status[i] = DataRetrievalClass.GetStatus(i);
             }
 
-            dgvOverview.Rows.Add(DataRetrievalClass.GetFiscalYear(), DataRetrievalClass.GetFiscalQuarter(), 
+            dgvOverview.Rows.Add(DataRetrievalClass.GetFiscalYear(), DataRetrievalClass.GetFiscalQuarter(),
                                                     status[0], status[1], status[2], status[3], status[4]);
             cbOvrYear.Items.Add(DataRetrievalClass.GetFiscalYear());
 
@@ -55,7 +55,7 @@ namespace Greenheck_Project
                 }
             }
 
-            foreach(int year in years)
+            foreach (int year in years)
             {
                 List<Quarter> qYear = DataRetrievalClass.GetQuarter(year);
                 for (int i = 1; i <= DataRetrievalClass.FindQuarter(year); i++)
@@ -69,7 +69,7 @@ namespace Greenheck_Project
 
                     foreach (Quarter q in qYear)
                     {
-                        if(q.fiscQuarter == i)
+                        if (q.fiscQuarter == i)
                         {
                             switch (q.statusID)
                             {
@@ -119,10 +119,12 @@ namespace Greenheck_Project
             //clears contents from status drop-down then refills, preventing multiple instances
             //of a single entity.
             cbStatus.Items.Clear();
+            cbFocusStatus.Items.Clear();
             List<Status> status = Database.DataRetrievalClass.GetStatus();
             foreach (Status s in status)
             {
                 cbStatus.Items.Add(s.StatusID);
+                cbFocusStatus.Items.Add(s.StatusName);
             }
 
             //clears contents from delete project and focus project drop-down then refills, preventing multiple instances
@@ -191,11 +193,29 @@ namespace Greenheck_Project
                     cbFocus.Items.Add(comment.FocusID);
                 }
 
-                if (!chkFocus.Items.Contains(comment.FocusID))
-                {
-                    chkFocus.Items.Add(comment.FocusID);
-                }
+                //if (!chkFocus.Items.Contains(comment.FocusID))
+                //{
+                //    chkFocus.Items.Add(comment.FocusID);
+                //}
             }
+
+            chkFocus.SetItemChecked(0, true);
+
+            //foreach( string item in chkFocus.SelectedIndices.CopyTo)
+            //{
+            //    s += item.ToString() + ", ";
+            //}
+
+            //int[] results = new int[chkFocus.Items.Count];
+
+            //chkFocus.SelectedIndices.CopyTo(results, 0);
+
+
+            //for(int i = 0; i < results.Length; i++)
+            //{
+            //    s += results[i].ToString();
+            //}
+            //MessageBox.Show(s);
         }
 
         //Filter method, when a department is chosen it filters the teams in the team drop-down
@@ -218,9 +238,9 @@ namespace Greenheck_Project
         {
             //Create a new Team object from data provided in the text and combo boxes
             Teams here = new Teams();
-            here.TeamID= DataRetrievalClass.GenerateTeamID() +1;
+            here.TeamID = DataRetrievalClass.GenerateTeamID() + 1;
             here.TeamName = txtTeamName.Text;
-            
+
             //Check to see if a team with the same name or id exists. If so, display message and prevent creation.
             if (Database.DataRetrievalClass.TeamExists(txtTeamName.Text))
             {
@@ -230,7 +250,7 @@ namespace Greenheck_Project
             {
                 int dep = Int32.Parse(cbDeptID.SelectedItem.ToString());
                 DataRetrievalClass.CreateTeam(here.TeamID, here.TeamName, dep);
-                MessageBox.Show( txtTeamName.Text + " successfully created.");
+                MessageBox.Show(txtTeamName.Text + " successfully created.");
                 cbDeptID.Refresh();
                 txtTeamName.Clear();
             }
@@ -387,27 +407,19 @@ namespace Greenheck_Project
 
         private void btnCommAdd_Click(object sender, EventArgs e)
         {
-            //    //Create a new Comment object from data provided in the text and combo boxes
-            //    FocusComments comments = new FocusComments();
-            //    comments.FiscalYear = Convert.ToInt32(cbFocusYear.SelectedIndex);
-            //    comments.Quarter = Convert.ToInt32(cbFocusQuarter.SelectedIndex);
-            //    comments.ProjectID = Convert.ToInt32(cbFocusProject.SelectedIndex);
-            //    comments.FocusID = Convert.ToInt32(cbFocus.SelectedIndex);
+            //Create a new Comment object from data provided in the text and combo boxes
+            FocusComments comments = new FocusComments();
+            comments.FiscalYear = Convert.ToInt32(cbFocusYear.SelectedIndex);
+            comments.Quarter = Convert.ToInt32(cbFocusQuarter.SelectedIndex);
+            comments.ProjectID = Convert.ToInt32(cbFocusProject.SelectedIndex);
+            comments.StatusID = Convert.ToInt32(cbFocusStatus.SelectedIndex.ToString());
+            comments.FocusID = cbFocus.SelectedIndex.ToString();
+            comments.Comments = txtFocusComments.ToString();
 
-            //    //Check to see if a department with the same name exists. If so, display message and prevent creation.
-            //    if (Database.DataRetrievalClass.DepartmentExists(txtDepartmentName.Text))
-            //    {
-            //        MessageBox.Show("The name of this department already exists, please choose another.");
-            //    }
-            //    else
-            //    {
-            //        //int dep = Int32.Parse(cbDeptID.SelectedItem.ToString());
-            //        DataRetrievalClass.CreateDepartment(comments.DeptID, comments.DeptName, comments.DeptHead);
-            //        MessageBox.Show(txtDepartmentName.Text + " successfully created.");
-
-            //        txtDepartmentName.Clear();
-            //        txtDepartmentHead.Clear();
-            //    }
+        
+                DataRetrievalClass.CreateComments(comments.FiscalYear, comments.Quarter, comments.ProjectID, comments.StatusID, comments.FocusID, comments.Comments);
+                MessageBox.Show("Comment successfully created.");
+            
         }
 
         //Generates a detailed report of Projects with a given status at a given time
@@ -418,7 +430,7 @@ namespace Greenheck_Project
                 Details next = new Details(Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString()),
                     Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString()), dgvOverview.CurrentCell.ColumnIndex - 2);
 
-                next.passedInfo = dgvOverview.CurrentCell.ColumnIndex -1;
+                next.passedInfo = dgvOverview.CurrentCell.ColumnIndex - 1;
                 next.passedYear = Int32.Parse(dgvOverview.CurrentRow.Cells[0].Value.ToString());
                 next.passedQuarter = Int32.Parse(dgvOverview.CurrentRow.Cells[1].Value.ToString());
 
@@ -428,7 +440,7 @@ namespace Greenheck_Project
 
         private void cbFocusYear_SelectedIndexChanged(object sender, EventArgs e)
         {
-            
+
         }
 
         private void btnFilter_Click(object sender, EventArgs e)
@@ -437,7 +449,7 @@ namespace Greenheck_Project
             int selectedYear = Int32.Parse(cbOvrYear.SelectedItem.ToString());
             List<Quarter> selected = DataRetrievalClass.GetQuarter(selectedYear);
 
-            for(int i = 1; i <= DataRetrievalClass.FindQuarter(selectedYear); i++)
+            for (int i = 1; i <= DataRetrievalClass.FindQuarter(selectedYear); i++)
             {
                 int notStarted = 0;
                 int inProgress = 0;
@@ -482,3 +494,4 @@ namespace Greenheck_Project
         //}
     }
 }
+
