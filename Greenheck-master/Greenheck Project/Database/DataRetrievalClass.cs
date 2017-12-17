@@ -11,9 +11,9 @@ namespace Greenheck_Project.Database
     class DataRetrievalClass
     {
         #region Connection String
-        
+
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Tyler\Downloads\Greenheck2-master (2)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\tleac021\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -115,9 +115,9 @@ namespace Greenheck_Project.Database
             List<Teams> test = GetTeams();
             bool exist = false;
 
-            foreach(Teams t in test)
+            foreach (Teams t in test)
             {
-                if(t.TeamName == name)
+                if (t.TeamName == name)
                 {
                     exist = true;
                 }
@@ -127,7 +127,7 @@ namespace Greenheck_Project.Database
         }
 
         //Adds a new row to the TeamTable in the database based on data passed in through text boxes
-        public static void CreateTeam(int id, string name , int dept)
+        public static void CreateTeam(int id, string name, int dept)
         {
             SqlCommand put = new SqlCommand();
             put.Connection = GetConn();
@@ -608,6 +608,7 @@ namespace Greenheck_Project.Database
                 comment.ProjectID = Int32.Parse(list["ProjectID"].ToString());
                 comment.FocusID = list["FocusID"].ToString();
                 comment.Comments = list["Comments"].ToString();
+                comment.StatusID = Int32.Parse(list["StatusID"].ToString());
 
                 comments.Add(comment);
             }
@@ -645,16 +646,17 @@ namespace Greenheck_Project.Database
         }
 
         //Adds a new row to the FocusCommentsTable in the database based on data passed in through text boxes and combo boxes
-        public static void CreateComments(int fiscalyear, int quarter, int pid, int sid, string comments)
+        public static void CreateComments(int fiscalyear, int quarter, int pid, int sid, string focusid, string comments)
         {
             SqlCommand put = new SqlCommand();
             put.Connection = GetConn();
-            put.CommandText = "INSERT INTO FocusCommentsTable VALUES(@param1, @param2, @param3, @param4, @param5)";
+            put.CommandText = "INSERT INTO FocusCommentsTable VALUES(@param1, @param2, @param3, @param4, @param5, param6)";
             put.Parameters.AddWithValue("@param1", fiscalyear);
             put.Parameters.AddWithValue("@param2", quarter);
             put.Parameters.AddWithValue("@param3", pid);
             put.Parameters.AddWithValue("@param4", sid);
-            put.Parameters.AddWithValue("@param5", comments);
+            put.Parameters.AddWithValue("@param6", focusid);
+            put.Parameters.AddWithValue("@param6", comments);
 
             put.ExecuteNonQuery();
 
@@ -698,7 +700,7 @@ namespace Greenheck_Project.Database
             int year = when.Year;
             if (when.Month > 9)
             {
-                return (year+1);
+                return (year + 1);
             }
             else
             {
@@ -743,19 +745,19 @@ namespace Greenheck_Project.Database
             int q;
             DateTime when = DateTime.Now;
 
-            if(when.Month > 9)
+            if (when.Month > 9)
             {
                 q = 1;
             }
             else
             {
-                if(when.Month > 6)
+                if (when.Month > 6)
                 {
                     q = 4;
                 }
                 else
                 {
-                    if(when.Month > 3)
+                    if (when.Month > 3)
                     {
                         q = 3;
                     }
