@@ -10,10 +10,8 @@ namespace Greenheck_Project.Database
 {
     class DataRetrievalClass
     {
-        #region Connection String
-
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\tleac021\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck2-Arinthalas-patch-6\Greenheck2-Arinthalas-patch-6\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -22,8 +20,6 @@ namespace Greenheck_Project.Database
             thing.Open();
             return thing;
         }
-
-        #endregion
 
         #region Team Methods
         //Fetches all the teams from the database and returns them in a list.
@@ -44,13 +40,11 @@ namespace Greenheck_Project.Database
             while (lists.Read())
             {
                 Teams me = new Teams();
-                me.TeamID = Convert.ToInt32(lists["TeamID"]);
-                me.TeamName = lists["TeamName"].ToString();
+                me.id = Convert.ToInt32(lists["TeamID"]);
+                me.name = lists["TeamName"].ToString();
                 them.Add(me);
             }
-
             fetch.Connection.Close();
-
             return them;
         }
 
@@ -66,18 +60,18 @@ namespace Greenheck_Project.Database
             fetch.CommandText = "SELECT TeamName, TeamID FROM TeamTable WHERE DeptID = @param1";
             fetch.Parameters.AddWithValue("@param1", depID);
 
+
             SqlDataReader lists = fetch.ExecuteReader();
+
 
             while (lists.Read())
             {
                 Teams me = new Teams();
-                me.TeamID = Convert.ToInt32(lists["TeamID"]);
-                me.TeamName = lists["TeamName"].ToString();
+                me.id = Convert.ToInt32(lists["TeamID"]);
+                me.name = lists["TeamName"].ToString();
                 them.Add(me);
             }
-
             fetch.Connection.Close();
-
             return them;
         }
 
@@ -115,9 +109,9 @@ namespace Greenheck_Project.Database
             List<Teams> test = GetTeams();
             bool exist = false;
 
-            foreach (Teams t in test)
+            foreach(Teams t in test)
             {
-                if (t.TeamName == name)
+                if(t.name == name)
                 {
                     exist = true;
                 }
@@ -127,7 +121,7 @@ namespace Greenheck_Project.Database
         }
 
         //Adds a new row to the TeamTable in the database based on data passed in through text boxes
-        public static void CreateTeam(int id, string name, int dept)
+        public static void CreateTeam(int id, string name , int dept)
         {
             SqlCommand put = new SqlCommand();
             put.Connection = GetConn();
@@ -152,7 +146,7 @@ namespace Greenheck_Project.Database
 
             rem.ExecuteNonQuery();
 
-            rem.CommandText = "DELETE FROM DeptartmentTeamBridge WHERE TeamID = @param1";
+            rem.CommandText = "DELETE FROM DeptTeamBridge WHERE TeamID = @param1";
 
             rem.Connection.Close();
         }
@@ -171,7 +165,7 @@ namespace Greenheck_Project.Database
 
         #region Department Methods
         //Fetches Department data from the database and returns it in a list
-        public static List<Department> GetDeptartment()
+        public static List<Department> GetDepartment()
         {
             List<Department> them = new List<Department>();
 
@@ -183,14 +177,11 @@ namespace Greenheck_Project.Database
 
             while (list.Read())
             {
-                Department department = new Department();
-                department.DeptID = Convert.ToInt32(list["DepartmentID"]);
-                department.DeptName = list["DepartmentName"].ToString();
-                department.DeptHead = list["DepartmentHead"].ToString();
-
-                them.Add(department);
+                Department us = new Department();
+                us.DeptID = Convert.ToInt32(list["DepartmentID"]);
+                us.DeptName = list["DepartmentName"].ToString();
+                them.Add(us);
             }
-
             fetch.Connection.Close();
 
             return them;
@@ -231,24 +222,27 @@ namespace Greenheck_Project.Database
             return name;
         }
 
-        //Logic test to determine wether a department name or id already exists in the database
         public static bool DepartmentExists(string name)
         {
-            List<Department> test = GetDeptartment();
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT * FROM DepartmentTable WHERE DepartmentName = @param1";
+            fetch.Parameters.AddWithValue("@param1", name);
+
             bool exist = false;
 
-            foreach (Department d in test)
+            int rows = fetch.ExecuteNonQuery();
+            fetch.Connection.Close();
+
+            if (rows > 0)
             {
-                if (d.DeptName == name)
-                {
-                    exist = true;
-                }
+                exist = true;
             }
 
             return exist;
         }
 
-        //Adds a new row to the DepartmentTable in the database based on data passed in through text boxes
         public static void CreateDepartment(int id, string name, string head)
         {
             SqlCommand put = new SqlCommand();
@@ -263,7 +257,6 @@ namespace Greenheck_Project.Database
             put.Connection.Close();
         }
 
-        //Deletes a department from the databased based on a passed ID.
         public static void DeleteDepartment(int id)
         {
             SqlCommand rem = new SqlCommand();
@@ -292,32 +285,25 @@ namespace Greenheck_Project.Database
         #endregion
 
         #region Project Methods
-
         public static List<Project> GetProjects()
         {
-            //List to be returned
             List<Project> projects = new List<Project>();
 
-            //Defines SQL command
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
-            fetch.CommandText = "Select * FROM ProjectTable";
 
-            SqlDataReader lists = fetch.ExecuteReader();
+            fetch.CommandText = "SELECT * FROM ProjectTable";
 
-            //Creates project objects, adds data to them and adds the object to the list while data
-            //can still be retrieved from the database
-            while (lists.Read())
+            SqlDataReader list = fetch.ExecuteReader();
+
+            while (list.Read())
             {
-                Project project = new Project();
-                project.ProjectID = Convert.ToInt32(lists["ProjectID"]);
-                project.ProjectName = lists["ProjectName"].ToString();
-                project.Status = Convert.ToInt32(lists["CurrentStatus"]);
-                project.TeamID = Convert.ToInt32(lists["TeamID"]);
-                projects.Add(project);
+                Project p = new Project(Int32.Parse(list["ProjectID"].ToString()),
+                    list["ProjectName"].ToString(),
+                    Int32.Parse(list["TeamID"].ToString()), 
+                    Int32.Parse(list["CurrentStatus"].ToString()));
+                projects.Add(p);
             }
-
-            fetch.Connection.Close();
 
             return projects;
         }
@@ -335,27 +321,17 @@ namespace Greenheck_Project.Database
             return result;
         }
 
-        //Fetches the ID of a specified project.
         public static int GetProjectIDbyName(string name)
         {
-            List<Project> projects = new List<Project>();
-
             SqlCommand fetch = new SqlCommand();
             fetch.Connection = GetConn();
+
             fetch.CommandText = "SELECT ProjectID FROM ProjectTable WHERE ProjectName = @param1";
             fetch.Parameters.AddWithValue("@param1", name);
 
-            SqlDataReader list = fetch.ExecuteReader();
+            int id = Int32.Parse(fetch.ExecuteScalar().ToString());
 
-            while (list.Read())
-            {
-                Project project = new Project();
-                project.ProjectID = Convert.ToInt32(list["ProjectID"]);
-                projects.Add(project);
-            }
-            fetch.Connection.Close();
-
-            return projects[0].ProjectID;
+            return id;
         }
 
         //Logic test to determine wether a project name or id already exists in the database
@@ -375,11 +351,11 @@ namespace Greenheck_Project.Database
             return exist;
         }
 
-        //Adds a new row to the ProjectTable in the database based on data passed in through text boxes and combo boxes
-        public static void CreateProject(int pid, string pname, int status, int tid)
+        public static void CreateProject(int pid, string pname, int status, int tid, bool[] focus)
         {
             SqlCommand put = new SqlCommand();
             put.Connection = GetConn();
+
             put.CommandText = "INSERT INTO ProjectTable VALUES(@param1, @param2, @param3, @param4)";
             put.Parameters.AddWithValue("@param1", pid);
             put.Parameters.AddWithValue("@param2", pname);
@@ -389,11 +365,34 @@ namespace Greenheck_Project.Database
             put.ExecuteNonQuery();
 
             put.Connection.Close();
+
+            for(int i = 0; i < focus.Length; i++)
+            {
+                if (focus[i])
+                {
+                    CreateFocusProjectBridge(pid, i+1);
+                }
+            }
         }
 
-        //Deletes a project from the database based on a passed ID.
+        public static void CreateFocusProjectBridge(int pid, int focus)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+
+            put.CommandText = "INSERT INTO ProjectFocusBridge VALUES(@param1, @param2)";
+            put.Parameters.AddWithValue("@param1", pid);
+            put.Parameters.AddWithValue("@param2", focus);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
         public static void DeleteProject(int id)
         {
+            DeleteFromProjectFocusBridge(id);
+
             SqlCommand rem = new SqlCommand();
             rem.Connection = GetConn();
 
@@ -402,8 +401,18 @@ namespace Greenheck_Project.Database
 
             rem.ExecuteNonQuery();
 
-            rem.CommandText = "DELETE FROM ProjectFocusBridge WHERE ProjectID = @param1";
+            rem.Connection.Close();   
+        }
 
+        public static void DeleteFromProjectFocusBridge(int id)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "DELETE FROM ProjectFocusBridge WHERE ProjectID = @param1";
+            rem.Parameters.AddWithValue("@param1", id);
+
+            rem.ExecuteNonQuery();
             rem.Connection.Close();
         }
 
@@ -420,7 +429,6 @@ namespace Greenheck_Project.Database
         #endregion
 
         #region Quarter Methods
-
         //Fetches data from previous quarters and returns it as a list.
         public static List<Quarter> GetQuarter()
         {
@@ -434,14 +442,14 @@ namespace Greenheck_Project.Database
 
             while (list.Read())
             {
-                Quarter thus = new Quarter();
-                thus.fiscYear = Convert.ToInt32(list["FiscalYear"]);
-                thus.fiscQuarter = Convert.ToInt32(list["Quarter"]);
-                thus.projectID = Convert.ToInt32(list["ProjectID"]);
-                thus.statusID = Convert.ToInt32(list["StatusID"]);
-                thus.comments = list["Comments"].ToString();
+                Quarter q = new Quarter();
+                q.fiscYear = Convert.ToInt32(list["FiscalYear"]);
+                q.fiscQuarter = Convert.ToInt32(list["Quarter"]);
+                q.projectID = Convert.ToInt32(list["ProjectID"]);
+                q.statusID = Convert.ToInt32(list["StatusID"]);
+                q.comments = list["Comments"].ToString();
 
-                quarterList.Add(thus);
+                quarterList.Add(q);
             }
 
             return quarterList;
@@ -502,19 +510,6 @@ namespace Greenheck_Project.Database
             return statuses;
         }
 
-        public static void CreateStatus(int id, string name)
-        {
-            SqlCommand put = new SqlCommand();
-            put.Connection = GetConn();
-            put.CommandText = "INSERT INTO StatusTable VALUES(@param1, @param2)";
-            put.Parameters.AddWithValue("@param1", id);
-            put.Parameters.AddWithValue("@param2", name);
-
-            put.ExecuteNonQuery();
-
-            put.Connection.Close();
-        }
-
         //Fetches and returns the number of projects that share a specified status.
         public static int GetStatus(int num)
         {
@@ -529,6 +524,34 @@ namespace Greenheck_Project.Database
             fetch.Connection.Close();
 
             return x;
+        }
+
+        public static string GetStatusName(int id)
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT StatusName from StatusTable WHERE StatusId = @param1";
+            fetch.Parameters.AddWithValue("@param1", id);
+
+            string name = fetch.ExecuteScalar().ToString();
+
+            fetch.Connection.Close();
+
+            return name;
+        }
+
+        public static void CreateStatus(int id, string name)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+            put.CommandText = "INSERT INTO StatusTable VALUES(@param1, @param2)";
+            put.Parameters.AddWithValue("@param1", id);
+            put.Parameters.AddWithValue("@param2", name);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
         }
 
         //Counts the number of unique statuses from the StatusTable
@@ -548,48 +571,49 @@ namespace Greenheck_Project.Database
 
         #endregion
 
-        //public static List<T> GetDetailedStatus()
-        //{
-        //    List<Teams> teams = new List<Teams>();
-        //    List<Project> projects = new List<Project>();
-        //    List<Status> status = new List<Status>();
+        #region Focus Category Methods
 
-        //    SqlCommand fetch = new SqlCommand();
-        //    fetch.Connection = GetConn();
+        public static void CreateFocus(int id, string name)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
 
-        //    fetch.CommandText = "SELECT T.TeamName, P.ProjectName, S.StatusName FROM TeamTable T, ProjectTable P, StatusTable S WHERE T.TeamID = P.TeamID AND P.StatusID = S.StatusID AND S.StatusID = @param1";
+            put.CommandText = "INSERT INTO FocusCategoryTable VALUES(@param1, @param2)";
+            put.Parameters.AddWithValue("@param1", id);
+            put.Parameters.AddWithValue("@param2", name);
 
-        //    SqlDataReader things = fetch.ExecuteReader();
+            put.ExecuteNonQuery();
+            put.Connection.Close();
 
-        //    List<T> data = new List<T>();
-        //    while (things.Read())
-        //    {
-        //        GenClass detail = new GenClass();
-        //        detail.status = things["StatusName"].ToString();
-        //        detail.project = things["ProjectName"].ToString();
-        //        detail.team = things["TeamName"].ToString();
-        //        data.Add(detail);
-        //    }
+        }
 
-        //    return data;
-        //}
+        public static List<Focus> GetFocusCat()
+        {
+            List<Focus> focusList = new List<Focus>();
 
-        //public static List<> GetDetails()
-        //{
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
 
-        //}
+            fetch.CommandText = "SELECT * FROM FocusCategoryTable";
 
-        //public static List<Project> GetProject(int year, int quarter, int status)
-        //{
-        //    List<Project> projects = new List<Project>();
+            SqlDataReader list = fetch.ExecuteReader();
 
-        //    SqlCommand fetch = new SqlCommand();
-        //    fetch.Connection = GetConn();
+            while (list.Read())
+            {
+                Focus current = new Focus(Int32.Parse(list["CategoryID"].ToString()), list["CategoryName"].ToString());
+                focusList.Add(current);
+            }
 
-        //    fetch.CommandText = "SELECT * FROM ProjectTable WHERE "
-        //}
+            fetch.Connection.Close();
 
-        public static List<FocusComments> GetComments()
+            return focusList;
+        }
+
+
+#endregion
+
+        #region Focus Comments Methods
+        public static List<FocusComments> GetFocusComments()
         {
             List<FocusComments> comments = new List<FocusComments>();
 
@@ -608,7 +632,6 @@ namespace Greenheck_Project.Database
                 comment.ProjectID = Int32.Parse(list["ProjectID"].ToString());
                 comment.FocusID = list["FocusID"].ToString();
                 comment.Comments = list["Comments"].ToString();
-                comment.StatusID = Int32.Parse(list["StatusID"].ToString());
 
                 comments.Add(comment);
             }
@@ -618,50 +641,32 @@ namespace Greenheck_Project.Database
             return comments;
         }
 
-        public static FocusComments GetComment(int year, int quarter, int projID)
-        {
-            SqlCommand fetch = new SqlCommand();
-            fetch.Connection = GetConn();
+        //public static FocusComments GetFocusComment(int year, int quarter, int projID)
+        //{
+        //    SqlCommand fetch = new SqlCommand();
+        //    fetch.Connection = GetConn();
 
-            fetch.CommandText = "SELECT * FROM FocusCommentsTable WHERE FiscalYear = @param1 AND Quarter = @param2 AND ProjectID = @param3";
-            fetch.Parameters.AddWithValue("@param1", year);
-            fetch.Parameters.AddWithValue("@param2", quarter);
-            fetch.Parameters.AddWithValue("@param3", projID);
+        //    fetch.CommandText = "SELECT * FROM FocusCommentsTable WHERE FiscalYear = @param1 AND Quarter = @param2 AND ProjectID = @param3";
+        //    fetch.Parameters.AddWithValue("@param1", year);
+        //    fetch.Parameters.AddWithValue("@param2", quarter);
+        //    fetch.Parameters.AddWithValue("@param3", projID);
 
-            SqlDataReader item = fetch.ExecuteReader();
+        //    SqlDataReader item = fetch.ExecuteReader();
 
-            FocusComments comment = new FocusComments();
+        //    FocusComments comment = new FocusComments();
 
-            while (item.Read())
-            {
-                comment.FiscalYear = Int32.Parse(item["FiscalYear"].ToString());
-                comment.Quarter = Int32.Parse(item["Quarter"].ToString());
-                comment.ProjectID = Int32.Parse(item["ProjectID"].ToString());
-                comment.FocusID = item["FocusID"].ToString();
-                comment.StatusID = Int32.Parse(item["StatusID"].ToString());
-                comment.Comments = item["Comments"].ToString();
-            }
+        //    while (item.Read())
+        //    {
+        //        comment.FiscalYear = Int32.Parse(item["FiscalYear"].ToString());
+        //        comment.Quarter = Int32.Parse(item["Quarter"].ToString());
+        //        comment.ProjectID = Int32.Parse(item["ProjectID"].ToString());
+        //        comment.FocusID = item["FocusID"].ToString();
+        //        comment.StatusID = Int32.Parse(item["StatusID"].ToString());
+        //        comment.Comments = item["Comments"].ToString();
+        //    }
 
-            return comment;
-        }
-
-        //Adds a new row to the FocusCommentsTable in the database based on data passed in through text boxes and combo boxes
-        public static void CreateComments(int fiscalyear, int quarter, int pid, int sid, string focusid, string comments)
-        {
-            SqlCommand put = new SqlCommand();
-            put.Connection = GetConn();
-            put.CommandText = "INSERT INTO FocusCommentsTable VALUES(@param1, @param2, @param3, @param4, @param5, param6)";
-            put.Parameters.AddWithValue("@param1", fiscalyear);
-            put.Parameters.AddWithValue("@param2", quarter);
-            put.Parameters.AddWithValue("@param3", pid);
-            put.Parameters.AddWithValue("@param4", sid);
-            put.Parameters.AddWithValue("@param6", focusid);
-            put.Parameters.AddWithValue("@param6", comments);
-
-            put.ExecuteNonQuery();
-
-            put.Connection.Close();
-        }
+        //    return comment;
+        //}
 
         public static List<FocusComments> GetDetails(int year, int quarter, int status)
         {
@@ -687,11 +692,64 @@ namespace Greenheck_Project.Database
 
                 comments.Add(comment);
             }
-
             fetch.Connection.Close();
 
             return comments;
         }
+
+        public static void CreateFocusComments(int fiscalyear, int quarter, int projectId, int status, string focus, string comments)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+            put.CommandText = "INSERT INTO FocusCommentsTable VALUES(@param1, @param2, @param3, @param4, @param5, @param6)";
+            put.Parameters.AddWithValue("@param1", fiscalyear);
+            put.Parameters.AddWithValue("@param2", quarter);
+            put.Parameters.AddWithValue("@param3", projectId);
+            put.Parameters.AddWithValue("@param4", status);
+            put.Parameters.AddWithValue("@param5", focus);
+            put.Parameters.AddWithValue("@param6", comments);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
+        public static void UpdateFocusComment(int year, int quarter, int projID, int status, string comment, string focus)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+
+            put.CommandText = "UPDATE FocusCommentsTable SET StatusID = @param4, FocusID = @param5, Comments = @param6 WHERE " +
+                "FiscalYear = @param1 AND Quarter = @param2 AND ProjectID = @param3";
+            put.Parameters.AddWithValue("@param1", year);
+            put.Parameters.AddWithValue("@param2", quarter);
+            put.Parameters.AddWithValue("@param3", projID);
+            put.Parameters.AddWithValue("@param4", status);
+            put.Parameters.AddWithValue("@param5", focus);
+            put.Parameters.AddWithValue("@param6", comment);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
+        public static void DeleteFocusComment(int year, int quarter, int projectID)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "DELETE FROM FocusCommentsTable WHERE FiscalYear = @param1 AND Quarter = @param2 AND ProjectID = @param3";
+            rem.Parameters.AddWithValue("@param1", year);
+            rem.Parameters.AddWithValue("@param2", quarter);
+            rem.Parameters.AddWithValue("@param3", projectID);
+
+            rem.ExecuteNonQuery();
+
+            rem.Connection.Close();
+        }
+
+#endregion
+
 
         //Determines the current fiscal year based on the current month.
         public static int GetFiscalYear()
@@ -700,13 +758,12 @@ namespace Greenheck_Project.Database
             int year = when.Year;
             if (when.Month > 9)
             {
-                return (year + 1);
+                return (year+1);
             }
             else
             {
                 return year;
             }
-
         }
 
         public static List<int> GetYears()
@@ -724,7 +781,6 @@ namespace Greenheck_Project.Database
                 int year = Int32.Parse(reader["FiscalYear"].ToString());
                 years.Add(year);
             }
-
             return years;
         }
 
@@ -745,19 +801,19 @@ namespace Greenheck_Project.Database
             int q;
             DateTime when = DateTime.Now;
 
-            if (when.Month > 9)
+            if(when.Month > 9)
             {
                 q = 1;
             }
             else
             {
-                if (when.Month > 6)
+                if(when.Month > 6)
                 {
                     q = 4;
                 }
                 else
                 {
-                    if (when.Month > 3)
+                    if(when.Month > 3)
                     {
                         q = 3;
                     }
@@ -767,7 +823,6 @@ namespace Greenheck_Project.Database
                     }
                 }
             }
-
             return q;
         }
     }
