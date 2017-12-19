@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Greenheck_Project.Problem_Domain
 {
-    class FocusComments
+    public class FocusComments
     {
         private int fiscalYear;
         private int quarter;

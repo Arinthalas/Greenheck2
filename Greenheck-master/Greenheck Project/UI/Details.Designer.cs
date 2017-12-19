@@ -49,6 +49,7 @@
             // 
             // btnCopy
             // 
+            this.btnCopy.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btnCopy.Location = new System.Drawing.Point(188, 344);
             this.btnCopy.Name = "btnCopy";
             this.btnCopy.Size = new System.Drawing.Size(75, 23);

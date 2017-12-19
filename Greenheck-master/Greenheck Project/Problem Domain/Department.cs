@@ -16,6 +16,7 @@ namespace Greenheck_Project.Problem_Domain
         public int DeptID { get => deptID; set => deptID = value; }
         public string DeptHead { get => deptHead; set => deptHead = value; }
 
+
         //Creates an empty Department
         public Department() { }
 
