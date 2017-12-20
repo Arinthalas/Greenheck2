@@ -371,6 +371,11 @@ namespace Greenheck_Project
                 txtProjectName.Clear();
                 cbTeamID.SelectedItem = null;
                 cbStatus.SelectedItem = null;
+
+                for (int i = 0; i < chkAddProjectFocus.Items.Count; i++)
+                {
+                    chkAddProjectFocus.SetItemChecked(i, false);
+                }
             }
         }
 
@@ -408,8 +413,8 @@ namespace Greenheck_Project
             //Repopulates the drop-down list after removal.
             cbDelProject.SelectedItem = null;
             cbDelProject.Items.Clear();
-            cbTeamID.Refresh();
-            cbStatus.Refresh();
+            cbTeamID.SelectedItem = null;
+            cbStatus.SelectedItem = null;
 
             //List<Project> projects = DataRetrievalClass.GetProjects();
             foreach (Project p in projects)
@@ -443,7 +448,7 @@ namespace Greenheck_Project
             }
         }
 
-        //Deletes a project from the database. Currently does not deal with foreign key constraint entries.
+        //Deletes a department from the database. Currently does not deal with foreign key constraint entries.
         private void btnDelDepartment_Click(object sender, EventArgs e)
         {
             string message = "Are you sure you want to remove " + cbDelDepartment.SelectedItem.ToString() + "?";
@@ -505,8 +510,31 @@ namespace Greenheck_Project
                 }
             }
 
-            DataRetrievalClass.UpdateFocusComment(Int32.Parse(cbFocusYear.SelectedItem.ToString()), Int32.Parse(cbFocusQuarter.SelectedItem.ToString()),
-                selectedfocusprojectid, selectedfocusstatusid, txtFocusComments.Text, selectedfocus);
+            try
+            {
+                DataRetrievalClass.UpdateFocusComment(Int32.Parse(cbFocusYear.SelectedItem.ToString()), Int32.Parse(cbFocusQuarter.SelectedItem.ToString()),
+                    selectedfocusprojectid, selectedfocusstatusid, txtFocusComments.Text, selectedfocus);
+            }
+
+            catch (Exception)
+            {
+                Console.WriteLine("Something broke");
+            }
+
+            finally
+            {
+                MessageBox.Show("Data successfully updated!");
+                cbFocusYear.SelectedItem = null;
+                cbFocusStatus.SelectedItem = null;
+                cbFocusQuarter.SelectedItem = null;
+                cbFocusProject.SelectedItem = null;
+                txtFocusComments.Text = "";
+
+                for (int i = 0; i < chkFocus.Items.Count; i++)
+                {
+                    chkFocus.SetItemChecked(i, false);
+                }
+            }
         }
 
         private void btnCommAdd_Click(object sender, EventArgs e)
@@ -543,10 +571,12 @@ namespace Greenheck_Project
             {
                 DataRetrievalClass.CreateFocusComments(Int32.Parse(cbFocusYear.SelectedItem.ToString()), Int32.Parse(cbFocusQuarter.SelectedItem.ToString()), selectedfocusprojectid, selectedfocusstatusid, selectedfocus, txtFocusComments.Text);
             }
+
             catch(Exception)
             {
                 MessageBox.Show("Something broke");
             }
+
             finally
             {
                 MessageBox.Show("Data entered successfuly.");
@@ -555,6 +585,11 @@ namespace Greenheck_Project
                 cbFocusQuarter.SelectedItem = null;
                 cbFocusProject.SelectedItem = null;
                 txtFocusComments.Text = "";
+
+                for (int i = 0; i < chkFocus.Items.Count; i++)
+                {
+                    chkFocus.SetItemChecked(i, false);
+                }
             }
         }
 
@@ -569,12 +604,31 @@ namespace Greenheck_Project
                     selectedproject = p.ProjectID;
                 }
             }
-            DataRetrievalClass.DeleteFocusComment(Int32.Parse(cbFocusYear.SelectedItem.ToString()), Int32.Parse(cbFocusQuarter.SelectedItem.ToString()), selectedproject);
-            cbFocusYear.SelectedItem = null;
-            cbFocusStatus.SelectedItem = null;
-            cbFocusQuarter.SelectedItem = null;
-            cbFocusProject.SelectedItem = null;
-            txtFocusComments.Text = "";
+
+            try
+            {
+                DataRetrievalClass.DeleteFocusComment(Int32.Parse(cbFocusYear.SelectedItem.ToString()), Int32.Parse(cbFocusQuarter.SelectedItem.ToString()), selectedproject);
+            }
+
+            catch(Exception)
+            {
+                MessageBox.Show("Something broke");
+            }
+
+            finally
+            {
+                MessageBox.Show("Data sucessfully removed.");
+                cbFocusYear.SelectedItem = null;
+                cbFocusStatus.SelectedItem = null;
+                cbFocusQuarter.SelectedItem = null;
+                cbFocusProject.SelectedItem = null;
+                txtFocusComments.Text = "";
+
+                for (int i = 0; i < chkFocus.Items.Count; i++)
+                {
+                    chkFocus.SetItemChecked(i, false);
+                }
+            }
         }
     }
 }
