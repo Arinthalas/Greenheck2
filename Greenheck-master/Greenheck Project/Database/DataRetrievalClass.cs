@@ -11,7 +11,7 @@ namespace Greenheck_Project.Database
     class DataRetrievalClass
     {
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\tleac021\Downloads\Greenheck2-master (7)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -103,6 +103,19 @@ namespace Greenheck_Project.Database
             return name;
         }
 
+        public static void RemoveTeamFromProjects(int id)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "UPDATE ProjectTable SET TeamID = null WHERE TeamID = @param1";
+            rem.Parameters.AddWithValue("@param1", id);
+
+            rem.ExecuteNonQuery();
+
+            rem.Connection.Close();
+        }
+
         //Logic test to determine wether a team name or ID already exists in the database
         public static bool TeamExists(string name)
         {
@@ -135,9 +148,43 @@ namespace Greenheck_Project.Database
             put.Connection.Close();
         }
 
+        public static void CreateTeam(int id, string name, List<int> departments)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+            put.CommandText = "INSERT INTO TeamTable VALUES(@param1, @param2)";
+            put.Parameters.AddWithValue("@param1", id);
+            put.Parameters.AddWithValue("@param2", name);
+
+            put.ExecuteNonQuery();
+
+            foreach (int x in departments) {
+                CreateDepartmentTeamBridge(id, x + 1);
+            }
+
+            put.Connection.Close();
+        }
+
+        public static void CreateDepartmentTeamBridge(int id, int department)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+
+            put.CommandText = "INSERT INTO DepartmentTeamBridge VALUES(@param1, @param2)";
+            put.Parameters.AddWithValue("@param1", department);
+            put.Parameters.AddWithValue("@param2", id);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
         //Deletes a team from the databased based on a passed ID.
         public static void DeleteTeam(int id)
         {
+            DeleteDepartmentTeamBridgeByTeam(id);
+            RemoveTeamFromProjects(id);
+
             SqlCommand rem = new SqlCommand();
             rem.Connection = GetConn();
 
@@ -146,7 +193,18 @@ namespace Greenheck_Project.Database
 
             rem.ExecuteNonQuery();
 
-            rem.CommandText = "DELETE FROM DeptTeamBridge WHERE TeamID = @param1";
+            rem.Connection.Close();
+        }
+
+        public static void DeleteDepartmentTeamBridgeByTeam(int id)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "DELETE FROM DepartmentTeamBridge WHERE TeamID = @param1";
+            rem.Parameters.Add(new SqlParameter("@param1", id));
+
+            rem.ExecuteNonQuery();
 
             rem.Connection.Close();
         }
@@ -259,6 +317,8 @@ namespace Greenheck_Project.Database
 
         public static void DeleteDepartment(int id)
         {
+            DeleteDepartmentTeamBridgeByDepartment(id);
+
             SqlCommand rem = new SqlCommand();
             rem.Connection = GetConn();
 
@@ -267,7 +327,18 @@ namespace Greenheck_Project.Database
 
             rem.ExecuteNonQuery();
 
-            rem.CommandText = "DELETE FROM DeptartmentTeamBridge WHERE DepartmentID = @param1";
+            rem.Connection.Close();
+        }
+
+        public static void DeleteDepartmentTeamBridgeByDepartment(int id)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "DELETE FROM DepartmentTeamBridge WHERE DepartmentID = @param1";
+            rem.Parameters.Add(new SqlParameter("@param1", id));
+
+            rem.ExecuteNonQuery();
 
             rem.Connection.Close();
         }
@@ -554,6 +625,23 @@ namespace Greenheck_Project.Database
             put.Connection.Close();
         }
 
+        //Logic test to determine wether a Status name or ID already exists in the database
+        public static bool StatusExists(string name)
+        {
+            List<Status> test = GetStatus();
+            bool exist = false;
+
+            foreach (Status s in test)
+            {
+                if (s.StatusName == name)
+                {
+                    exist = true;
+                }
+            }
+
+            return exist;
+        }
+
         //Counts the number of unique statuses from the StatusTable
         public static int CountStatus()
         {
@@ -573,13 +661,13 @@ namespace Greenheck_Project.Database
 
         #region Focus Category Methods
 
-        public static void CreateFocus(int id, string name)
+        public static void CreateFocus(string name)
         {
             SqlCommand put = new SqlCommand();
             put.Connection = GetConn();
 
             put.CommandText = "INSERT INTO FocusCategoryTable VALUES(@param1, @param2)";
-            put.Parameters.AddWithValue("@param1", id);
+            put.Parameters.AddWithValue("@param1", GenerateFocusID()+1);
             put.Parameters.AddWithValue("@param2", name);
 
             put.ExecuteNonQuery();
@@ -609,8 +697,48 @@ namespace Greenheck_Project.Database
             return focusList;
         }
 
+        public static void DeleteFocus(string name)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
 
-#endregion
+            rem.CommandText = "DELETE FROM FocusCategoryTable WHERE CategoryName = @param1";
+            rem.Parameters.AddWithValue("@param1", name);
+
+            rem.ExecuteNonQuery();
+
+            rem.Connection.Close();
+        }
+
+        //Logic test to determine wether a focus name or ID already exists in the database
+        public static bool FocusExists(string name)
+        {
+            List<Focus> test = GetFocusCat();
+            bool exist = false;
+
+            foreach (Focus f in test)
+            {
+                if (f.FocusName == name)
+                {
+                    exist = true;
+                }
+            }
+
+            return exist;
+        }
+
+        public static int GenerateFocusID()
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT MAX(CategoryID) FROM FocusCategoryTable";
+
+            return Int32.Parse(fetch.ExecuteScalar().ToString());
+        }
+
+
+        #endregion
 
         #region Focus Comments Methods
         public static List<FocusComments> GetFocusComments()
@@ -748,7 +876,48 @@ namespace Greenheck_Project.Database
             rem.Connection.Close();
         }
 
-#endregion
+        #endregion
+
+        #region Status Methods
+
+        public static void CreateStatus(string name)
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+
+            put.CommandText = "INSERT INTO StatusTable VALUES(@param1, @param2)";
+            put.Parameters.AddWithValue("@param1", GenerateStatusID()+1);
+            put.Parameters.AddWithValue("@param2", name);
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
+        public static void DeleteStatus(string name)
+        {
+            SqlCommand rem = new SqlCommand();
+            rem.Connection = GetConn();
+
+            rem.CommandText = "DELETE FROM StatusTable WHERE StatusName = @param1";
+            rem.Parameters.AddWithValue("@param1", name);
+
+            rem.ExecuteNonQuery();
+
+            rem.Connection.Close();
+        }
+
+        public static int GenerateStatusID()
+        {
+            SqlCommand fetch = new SqlCommand();
+            fetch.Connection = GetConn();
+
+            fetch.CommandText = "SELECT MAX(StatusID) FROM StatusTable";
+
+            return Int32.Parse(fetch.ExecuteScalar().ToString());
+        }
+
+        #endregion
 
 
         //Determines the current fiscal year based on the current month.
