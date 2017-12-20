@@ -32,6 +32,11 @@ namespace Greenheck_Project
         //Populates the overview table with values
         private void Form1_Load(object sender, EventArgs e)
         {
+            FillTable();
+        }
+
+        private void FillTable()
+        {
             dgvOverview.AutoGenerateColumns = true;
 
             //Fetches previous quarter data from the database and current statuses of projects.
@@ -45,7 +50,7 @@ namespace Greenheck_Project
                 status[i] = DataRetrievalClass.GetStatus(i);
             }
 
-            dgvOverview.Rows.Add(DataRetrievalClass.GetFiscalYear(), DataRetrievalClass.GetFiscalQuarter(), 
+            dgvOverview.Rows.Add(DataRetrievalClass.GetFiscalYear(), DataRetrievalClass.GetFiscalQuarter(),
                                                     status[0], status[1], status[2], status[3], status[4]);
             cbOvrYear.Items.Add(DataRetrievalClass.GetFiscalYear());
 
@@ -99,6 +104,7 @@ namespace Greenheck_Project
                     }
                     dgvOverview.Rows.Add(year, i, notStarted, inProgress, complete, delayed, cancelled);
                 }
+
             }
         }
 
@@ -107,7 +113,9 @@ namespace Greenheck_Project
         {
             //clears contents from department drop-down then refills, preventing multiple instances
             //of a single entity.
-            cbDeptID.Items.Clear();
+            cbOvrYear.SelectedItem = null;
+            dgvOverview.Rows.Clear();
+            FillTable();
             cbDelDepartment.Items.Clear();
             cbTeamID.Items.Clear();
             cbDelTeam.Items.Clear();
@@ -116,10 +124,13 @@ namespace Greenheck_Project
             cbFocusProject.Items.Clear();
             cbFocusStatus.Items.Clear();
             cbStatus.Items.Clear();
+            cbDelStatus.Items.Clear();
+            cbDelFocus.Items.Clear();
             cbDelProject.Items.Clear();
             txtFocusComments.Clear();
             chkFocus.Items.Clear();
             chkAddProjectFocus.Items.Clear();
+            chkDepartment.Items.Clear();
 
             dept = DataRetrievalClass.GetDepartment();
             projects = DataRetrievalClass.GetProjects();
@@ -131,8 +142,8 @@ namespace Greenheck_Project
 
             foreach (Department d in dept)
             {
-                cbDeptID.Items.Add(d.DeptID);
                 cbDelDepartment.Items.Add(d.DeptName);
+                chkDepartment.Items.Add(d.DeptName);
             }
 
             //clears contents from delete project and focus project drop-down then refills, preventing multiple instances
@@ -165,6 +176,7 @@ namespace Greenheck_Project
                 {
                     cbFocusStatus.Items.Add(s.StatusName);
                     cbStatus.Items.Add(s.StatusName);
+                    cbDelStatus.Items.Add(s.StatusName);
                 }
                 
             }
@@ -175,6 +187,7 @@ namespace Greenheck_Project
                 {
                     chkFocus.Items.Add(f.FocusName);
                     chkAddProjectFocus.Items.Add(f.FocusName);
+                    cbDelFocus.Items.Add(f.FocusName);
                 }
 
             }
@@ -213,11 +226,23 @@ namespace Greenheck_Project
             }
             else
             {
-                int dep = Int32.Parse(cbDeptID.SelectedItem.ToString());
-                DataRetrievalClass.CreateTeam(t.id, t.name, dep);
+                List<int> departments = new List<int>();
+                for(int i = 0; i < chkDepartment.Items.Count; i++)
+                {
+                    if (chkDepartment.GetItemChecked(i))
+                    {
+                        departments.Add(i);
+                    }
+                }
+                //int dep = Int32.Parse(cbDeptID.SelectedItem.ToString());
+                //DataRetrievalClass.CreateTeam(t.id, t.name, dep);
+                DataRetrievalClass.CreateTeam(t.id, t.name, departments);
                 MessageBox.Show( txtTeamName.Text + " successfully created.");
-                cbDeptID.Refresh();
                 txtTeamName.Clear();
+                for (int i = 0; i < chkAddProjectFocus.Items.Count; i++)
+                {
+                    chkDepartment.SetItemChecked(i, false);
+                }
             }
         }
 
@@ -283,46 +308,53 @@ namespace Greenheck_Project
         private void btnFilter_Click(object sender, EventArgs e)
         {
             dgvOverview.Rows.Clear();
-            int selectedYear = Int32.Parse(cbOvrYear.SelectedItem.ToString());
-            List<Quarter> selected = DataRetrievalClass.GetQuarter(selectedYear);
-
-            for(int i = 1; i <= DataRetrievalClass.FindQuarter(selectedYear); i++)
+            if(cbOvrYear.SelectedItem == null)
             {
-                int notStarted = 0;
-                int inProgress = 0;
-                int complete = 0;
-                int delayed = 0;
-                int cancelled = 0;
+                FillTable();
+            }
+            else {
 
-                foreach (Quarter q in selected)
+                int selectedYear = Int32.Parse(cbOvrYear.SelectedItem.ToString());
+                List<Quarter> selected = DataRetrievalClass.GetQuarter(selectedYear);
+
+                for (int i = 1; i <= DataRetrievalClass.FindQuarter(selectedYear); i++)
                 {
-                    if (q.fiscQuarter == i)
+                    int notStarted = 0;
+                    int inProgress = 0;
+                    int complete = 0;
+                    int delayed = 0;
+                    int cancelled = 0;
+
+                    foreach (Quarter q in selected)
                     {
-                        switch (q.statusID)
+                        if (q.fiscQuarter == i)
                         {
-                            case 1:
-                                notStarted++;
-                                break;
+                            switch (q.statusID)
+                            {
+                                case 1:
+                                    notStarted++;
+                                    break;
 
-                            case 2:
-                                inProgress++;
-                                break;
+                                case 2:
+                                    inProgress++;
+                                    break;
 
-                            case 3:
-                                complete++;
-                                break;
+                                case 3:
+                                    complete++;
+                                    break;
 
-                            case 4:
-                                delayed++;
-                                break;
+                                case 4:
+                                    delayed++;
+                                    break;
 
-                            case 5:
-                                cancelled++;
-                                break;
+                                case 5:
+                                    cancelled++;
+                                    break;
+                            }
                         }
                     }
+                    dgvOverview.Rows.Add(selectedYear, i, notStarted, inProgress, complete, delayed, cancelled);
                 }
-                dgvOverview.Rows.Add(selectedYear, i, notStarted, inProgress, complete, delayed, cancelled);
             }
         }
 
@@ -486,7 +518,7 @@ namespace Greenheck_Project
             int selectedfocusstatusid = -1;
             string selectedfocus = "";
 
-            foreach(Project p in projects)
+            foreach (Project p in projects)
             {
                 if (p.ProjectName == cbFocusProject.SelectedItem.ToString())
                 {
@@ -494,15 +526,15 @@ namespace Greenheck_Project
                 }
             }
 
-            foreach(Status s in statusList)
+            foreach (Status s in statusList)
             {
-                if(s.StatusName == cbFocusStatus.SelectedItem.ToString())
+                if (s.StatusName == cbFocusStatus.SelectedItem.ToString())
                 {
                     selectedfocusstatusid = s.StatusID;
                 }
             }
 
-            for(int i = 0; i < chkFocus.Items.Count; i++)
+            for (int i = 0; i < chkFocus.Items.Count; i++)
             {
                 if (chkFocus.GetItemChecked(i))
                 {
@@ -571,12 +603,10 @@ namespace Greenheck_Project
             {
                 DataRetrievalClass.CreateFocusComments(Int32.Parse(cbFocusYear.SelectedItem.ToString()), Int32.Parse(cbFocusQuarter.SelectedItem.ToString()), selectedfocusprojectid, selectedfocusstatusid, selectedfocus, txtFocusComments.Text);
             }
-
             catch(Exception)
             {
                 MessageBox.Show("Something broke");
             }
-
             finally
             {
                 MessageBox.Show("Data entered successfuly.");
@@ -610,14 +640,14 @@ namespace Greenheck_Project
                 DataRetrievalClass.DeleteFocusComment(Int32.Parse(cbFocusYear.SelectedItem.ToString()), Int32.Parse(cbFocusQuarter.SelectedItem.ToString()), selectedproject);
             }
 
-            catch(Exception)
+            catch (Exception)
             {
-                MessageBox.Show("Something broke");
+                Console.WriteLine("Something broke!");
             }
 
             finally
             {
-                MessageBox.Show("Data sucessfully removed.");
+                MessageBox.Show("Data successfully removed.");
                 cbFocusYear.SelectedItem = null;
                 cbFocusStatus.SelectedItem = null;
                 cbFocusQuarter.SelectedItem = null;
@@ -628,6 +658,112 @@ namespace Greenheck_Project
                 {
                     chkFocus.SetItemChecked(i, false);
                 }
+            }
+        }
+
+        private void dgvOverview_MouseHover(object sender, EventArgs e)
+        {
+            ToolTip trial = new ToolTip();
+            trial.ShowAlways = true;
+            trial.SetToolTip(dgvOverview, "Clicking on a cell will\nbring up a detailed\nview for the given status\nat the given time.");
+        }
+
+        private void bntReset_Click(object sender, EventArgs e)
+        {
+            cbOvrYear.SelectedItem = null;
+            dgvOverview.Rows.Clear();
+            FillTable();
+        }
+
+        private void btnAddStatus_Click(object sender, EventArgs e)
+        {
+            //Check to see if a Status with the same name exists. If so, display message and prevent creation.
+            if (DataRetrievalClass.StatusExists(txtStatusName.Text))
+            {
+                MessageBox.Show("The name of this status already exists, please choose another.");
+            }
+            else
+            {
+                DataRetrievalClass.CreateStatus(txtStatusName.Text);
+                MessageBox.Show(txtStatusName.Text + " successfully created.");
+
+                txtStatusName.Clear();
+            }
+        }
+
+        private void btnAddFocus_Click(object sender, EventArgs e)
+        {
+            //Check to see if a focus with the same name exists. If so, display message and prevent creation.
+            if (DataRetrievalClass.FocusExists(txtFocusName.Text))
+            {
+                MessageBox.Show("The name of this focus already exists, please choose another.");
+            }
+            else
+            {
+                DataRetrievalClass.CreateFocus(txtFocusName.Text);
+                MessageBox.Show(txtFocusName.Text + " successfully created.");
+
+                txtFocusName.Clear();
+            }
+        }
+
+        private void btnDelStatus_Click(object sender, EventArgs e)
+        {
+            string message = "Are you sure you want to remove " + cbDelStatus.SelectedItem.ToString() + "?";
+            string caption = "Status Removal";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+
+            //Retrieve the ID of a status from the database by searching for the selected name in the drop-down.
+            string name = cbDelStatus.SelectedItem.ToString();
+            cbDelStatus.Items.Remove(cbDelStatus.SelectedItem.ToString());
+
+            result = MessageBox.Show(message, caption, buttons);
+
+            if (result == DialogResult.Yes)
+            {
+                //Deletes status from database and shows a confirmation message.
+                DataRetrievalClass.DeleteStatus(name);
+                MessageBox.Show(name + " has been removed.");
+            }
+
+            //Repopulates the drop-down list after removal.
+            cbDelStatus.Items.Clear();
+
+            List<Status> status = DataRetrievalClass.GetStatus();
+            foreach (Status s in status)
+            {
+                cbDelStatus.Items.Add(s.StatusName);
+            }
+        }
+
+        private void btnDelFocus_Click(object sender, EventArgs e)
+        {
+            string message = "Are you sure you want to remove " + cbDelFocus.SelectedItem.ToString() + "?";
+            string caption = "Focus Removal";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+
+            //Retrieve the ID of a focus from the database by searching for the selected name in the drop-down.
+            string name = cbDelFocus.SelectedItem.ToString();
+            cbDelFocus.Items.Remove(cbDelFocus.SelectedItem.ToString());
+
+            result = MessageBox.Show(message, caption, buttons);
+
+            if (result == DialogResult.Yes)
+            {
+                //Deletes status from database and shows a confirmation message.
+                DataRetrievalClass.DeleteFocus(name);
+                MessageBox.Show(name + " has been removed.");
+            }
+
+            //Repopulates the drop-down list after removal.
+            cbDelFocus.Items.Clear();
+
+            List<Focus> focus = DataRetrievalClass.GetFocusCat();
+            foreach (Focus f in focus)
+            {
+                cbDelFocus.Items.Add(f.FocusName);
             }
         }
     }
