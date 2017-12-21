@@ -239,7 +239,7 @@ namespace Greenheck_Project
                 DataRetrievalClass.CreateTeam(t.id, t.name, departments);
                 MessageBox.Show( txtTeamName.Text + " successfully created.");
                 txtTeamName.Clear();
-                for (int i = 0; i < chkAddProjectFocus.Items.Count; i++)
+                for (int i = 0; i < chkDepartment.Items.Count; i++)
                 {
                     chkDepartment.SetItemChecked(i, false);
                 }
@@ -249,15 +249,30 @@ namespace Greenheck_Project
         //Deletes a team from the database. Currently does not deal with foreign key constraint entries.
         private void btnDelTeam_Click(object sender, EventArgs e)
         {
+            string message = "Are you sure you want to remove " + cbDelTeam.SelectedItem.ToString() + "?";
+            string caption = "Team Removal";
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+
             //Retrieve the ID of a team from the database by searching for the selected name in the drop-down.
             int teamID = DataRetrievalClass.GetTeamByName(cbDelTeam.SelectedItem.ToString());
             string name = cbDelTeam.SelectedItem.ToString();
             cbDelTeam.Items.Remove(cbDelTeam.SelectedItem.ToString());
-            //Deletes team from database and shows a confirmation message.
-            DataRetrievalClass.DeleteTeam(teamID);
-            MessageBox.Show(name + " has been removed.");
+
+            result = MessageBox.Show(message, caption, buttons);
+
+            if (result == DialogResult.Yes)
+            {
+                //Deletes team from database and shows a confirmation message.
+                DataRetrievalClass.DeleteTeam(teamID);
+                MessageBox.Show(name + " has been removed.");
+            }
 
             //Repopulates the drop-down list after removal.
+            cbDelTeam.SelectedItem = null;
+            
+
+            //List<Project> projects = DataRetrievalClass.GetProjects();
             cbDelTeam.Items.Clear();
             List<Teams> them = Database.DataRetrievalClass.GetTeams();
             foreach (Teams t in them)

@@ -11,7 +11,7 @@ namespace Greenheck_Project.Database
     class DataRetrievalClass
     {
         //The connection string for the database, should be changed upon implementation at Greenheck
-        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\sholm299\Downloads\Greenheck2-master\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
+        private const string dbA = @"Data Source = (LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Tyler\Downloads\Greenheck2-master (4)\Greenheck2-master\Greenheck-master\Greenheck Project\Database\Database1.mdf";
 
         //Gets a connection to the database based on the above connection string and returns an open connection.
         public static SqlConnection GetConn()
@@ -405,6 +405,18 @@ namespace Greenheck_Project.Database
             return id;
         }
 
+        public static void GetProjectNotExists()
+        {
+            SqlCommand put = new SqlCommand();
+            put.Connection = GetConn();
+
+            put.CommandText = "SELECT * FROM TeamTable WHERE TeamID NOT EXISTS(SELECT TeamID FROM ProjectTable)";
+
+            put.ExecuteNonQuery();
+
+            put.Connection.Close();
+        }
+
         //Logic test to determine wether a project name or id already exists in the database
         public static bool ProjectExists(string name)
         {
@@ -768,33 +780,6 @@ namespace Greenheck_Project.Database
 
             return comments;
         }
-
-        //public static FocusComments GetFocusComment(int year, int quarter, int projID)
-        //{
-        //    SqlCommand fetch = new SqlCommand();
-        //    fetch.Connection = GetConn();
-
-        //    fetch.CommandText = "SELECT * FROM FocusCommentsTable WHERE FiscalYear = @param1 AND Quarter = @param2 AND ProjectID = @param3";
-        //    fetch.Parameters.AddWithValue("@param1", year);
-        //    fetch.Parameters.AddWithValue("@param2", quarter);
-        //    fetch.Parameters.AddWithValue("@param3", projID);
-
-        //    SqlDataReader item = fetch.ExecuteReader();
-
-        //    FocusComments comment = new FocusComments();
-
-        //    while (item.Read())
-        //    {
-        //        comment.FiscalYear = Int32.Parse(item["FiscalYear"].ToString());
-        //        comment.Quarter = Int32.Parse(item["Quarter"].ToString());
-        //        comment.ProjectID = Int32.Parse(item["ProjectID"].ToString());
-        //        comment.FocusID = item["FocusID"].ToString();
-        //        comment.StatusID = Int32.Parse(item["StatusID"].ToString());
-        //        comment.Comments = item["Comments"].ToString();
-        //    }
-
-        //    return comment;
-        //}
 
         public static List<FocusComments> GetDetails(int year, int quarter, int status)
         {
